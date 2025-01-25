@@ -1,0 +1,226 @@
+Database Models, Migrations, and Logic Impact
+This document explains the database models, migrations, and how controllers/services interact with the database. No code—just structure and logic.
+1. Database Models
+
+Models define tables and relationships. Migrations create/modify these tables.
+1.1. users Table
+
+    Fields:
+
+        user_id (PK), email, phone, password_hash, vehicle_info (JSON), created_at.
+
+    Relationships:
+
+        One-to-Many with service_requests (a user can have multiple requests).
+
+        One-to-Many with reviews (a user can write multiple reviews).
+
+Logic Impact:
+
+    AuthService: Inserts/updates rows during registration/login.
+
+    UserService: Updates vehicle_info or profile data.
+
+1.2. service_providers Table
+
+    Fields:
+
+        provider_id (PK), name, provider_type (e.g., "tow_truck"), rating, service_radius_km, is_available.
+
+    Relationships:
+
+        One-to-Many with services (a provider offers multiple services).
+
+        One-to-Many with locations (real-time GPS updates).
+
+Logic Impact:
+
+    ServiceProviderService: Updates is_available when a provider goes on/off duty.
+
+    ReviewController: Updates rating when a new review is submitted.
+
+1.3. service_requests Table
+
+    Fields:
+
+        request_id (PK), user_id (FK), provider_id (FK), service_type_id (FK), status, pickup_location (PostGIS GEOGRAPHY), total_price, requested_at.
+
+    Relationships:
+
+        One-to-One with request_details (extra service-specific data).
+
+        One-to-Many with payments (a request can have one payment).
+
+Logic Impact:
+
+    ServiceRequestService: Inserts a row when a request is created. Updates status as the request progresses.
+
+    PaymentService: Updates status to "paid" after successful payment.
+
+1.4. request_details Table
+
+    Fields:
+
+        detail_id (PK), request_id (FK), details (JSONB).
+
+    Example Data:
+
+        Towing: {"distance_km": 15, "vehicle_type": "SUV"}
+
+        Gas Delivery: {"fuel_type": "diesel", "liters": 10}
+
+Logic Impact:
+
+    ServiceRequestService: Inserts service-specific metadata here.
+
+1.5. locations Table
+
+    Fields:
+
+        location_id (PK), provider_id (FK), coordinates (PostGIS GEOGRAPHY), updated_at.
+
+Logic Impact:
+
+    GeolocationService: Updates coordinates when providers move.
+
+    GeolocationController: Queries this table to find nearby providers.
+
+1.6. pricing_models Table
+
+    Fields:
+
+        model_id (PK), service_type_id (FK), base_fee, fee_per_km, parameters (JSONB).
+
+Logic Impact:
+
+    PricingService: Reads this table to calculate prices dynamically.
+
+1.7. payments Table
+
+    Fields:
+
+        payment_id (PK), request_id (FK), amount, payment_method, transaction_id, status.
+
+Logic Impact:
+
+    PaymentService: Inserts a row on payment success/failure.
+
+2. Database Migrations
+
+Migrations are scripts to create/modify tables. Example order:
+
+    Initial Setup:
+
+        Create users, service_providers, service_types, services.
+
+    Service Workflow:
+
+        Create service_requests, request_details, locations.
+
+    Pricing & Payments:
+
+        Create pricing_models, payments.
+
+    Reviews & Notifications:
+
+        Create reviews, notifications.
+
+3. How Controllers/Services Affect the Database
+3.1. User Registration (UserController → AuthService)
+
+    AuthService → users table:
+
+        Insert: email, phone, password_hash.
+
+    Logic Impact:
+
+        A new user row is created.
+
+3.2. Creating a Tow Request (ServiceRequestController → ServiceRequestService)
+
+    ServiceRequestService → service_requests:
+
+        Insert: user_id, service_type_id, pickup_location.
+
+    ServiceRequestService → request_details:
+
+        Insert: distance_km, vehicle_type.
+
+    PricingService → pricing_models:
+
+        Query: Fetch base_fee and fee_per_km for towing.
+
+    Logic Impact:
+
+        A request row is created with status "pending".
+
+3.3. Accepting a Request (ServiceProviderController → ServiceRequestService)
+
+    ServiceRequestService → service_requests:
+
+        Update: Set provider_id and status to "accepted".
+
+    NotificationService → notifications:
+
+        Insert: Alert user that a provider is en route.
+
+    Logic Impact:
+
+        Request is now assigned to a provider.
+
+3.4. Processing Payment (PaymentController → PaymentService)
+
+    PaymentService → payments:
+
+        Insert: amount, payment_method, transaction_id.
+
+    PaymentService → service_requests:
+
+        Update: Set status to "paid".
+
+    Logic Impact:
+
+        Payment is recorded, and the request is marked as complete.
+
+3.5. Submitting a Review (ReviewController → ReviewService)
+
+    ReviewService → reviews:
+
+        Insert: rating, comment, provider_id.
+
+    ReviewService → service_providers:
+
+        Update: Recalculate rating (average of all reviews).
+
+    Logic Impact:
+
+        Provider’s rating is updated.
+
+4. Critical Database Interactions
+Service/Controller	Database Tables Affected	Action
+AuthService	users	Insert/Update
+ServiceRequestService	service_requests, request_details	Insert/Update
+GeolocationService	locations	Insert/Update
+PaymentService	payments, service_requests	Insert (payments), Update (request status)
+ReviewService	reviews, service_providers	Insert (reviews), Update (provider rating)
+5. Transactional Logic
+
+    Example: Payment processing involves:
+
+        Deducting funds.
+
+        Updating payments.
+
+        Updating service_requests.status.
+
+    If any step fails: Rollback all changes to maintain data consistency.
+
+6. Indexes for Performance
+
+    locations.coordinates: Geospatial index for fast nearby provider queries.
+
+    service_requests.status: Quickly filter pending/accepted requests.
+
+    users.email: Unique index for fast login lookups.
+
+This document clarifies how each component interacts with the database.
