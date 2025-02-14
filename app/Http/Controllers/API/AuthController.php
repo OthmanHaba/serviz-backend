@@ -18,12 +18,22 @@ class AuthController extends Controller
 
     public function register(Request $request)
     {
-        $validator = Validator::make($request->all(), [
+        $rules = [
+            'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users',
             'phone' => 'required|string|unique:users',
             'password' => 'required|string|min:8',
-            'vehicle_info' => 'nullable|array'
-        ]);
+            'vehicle_info' => 'nullable|array',
+            'role' => 'required|in:user,provider',
+        ];
+
+        if ($request->role === 'provider') {
+            $rules['service_type'] = 'required|array';
+            $rules['service_type.*.servic_type_id'] = 'required|exists:servic_types,id';
+            $rules['service_type.*.price'] = 'required|numeric|min:0';
+        }
+
+        $validator = Validator::make($request->all(), $rules);
 
         if ($validator->fails()) {
             return response()->json(['errors' => $validator->errors()], 422);
@@ -33,7 +43,7 @@ class AuthController extends Controller
 
         return response()->json([
             'message' => 'User registered successfully',
-            'user' => $user
+            'user' => $user,
         ], 201);
     }
 
@@ -41,7 +51,7 @@ class AuthController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'email' => 'required|email',
-            'password' => 'required|string'
+            'password' => 'required|string',
         ]);
 
         if ($validator->fails()) {
@@ -49,7 +59,9 @@ class AuthController extends Controller
         }
 
         try {
+
             $result = $this->authService->login($request->only('email', 'password'));
+
             return response()->json($result);
         } catch (\Exception $e) {
             return response()->json(['message' => 'Invalid credentials'], 401);
@@ -59,6 +71,7 @@ class AuthController extends Controller
     public function logout(Request $request)
     {
         $this->authService->logout();
+
         return response()->json(['message' => 'Logged out successfully']);
     }
-} 
+}

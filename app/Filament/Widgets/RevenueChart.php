@@ -2,11 +2,11 @@
 
 namespace App\Filament\Widgets;
 
-use Filament\Widgets\ChartWidget;
 use App\Models\Payment;
-use Illuminate\Support\Carbon;
+use Filament\Widgets\ChartWidget;
 use Flowframe\Trend\Trend;
 use Flowframe\Trend\TrendValue;
+use Illuminate\Support\Carbon;
 
 class RevenueChart extends ChartWidget
 {
@@ -16,25 +16,28 @@ class RevenueChart extends ChartWidget
 
     protected function getData(): array
     {
-        $data = Trend::model(Payment::class)
-            ->between(
-                start: now()->startOfMonth(),
-                end: now()->endOfMonth(),
-            )
-            ->perDay()
-            ->sum('amount');
+        // $data = Trend::model(Payment::class)
+        //     ->between(
+        //         start: now()->startOfMonth(),
+        //         end: now()->endOfMonth(),
+        //     )
+        //     ->perDay()
+        //     ->sum('amount');
+        $data = collect([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
 
         return [
             'datasets' => [
                 [
                     'label' => 'Revenue',
-                    'data' => $data->map(fn (TrendValue $value) => $value->aggregate / 100), // Convert cents to dollars
+                    // 'data' => $data->map(fn (TrendValue $value) => $value->aggregate / 100), // Convert cents to dollars
+                    'data' => $data,
                     'borderColor' => '#059669',
                     'fill' => 'start',
                     'backgroundColor' => 'rgba(5, 150, 105, 0.1)',
                 ],
             ],
-            'labels' => $data->map(fn (TrendValue $value) => Carbon::parse($value->date)->format('M d')),
+            // 'labels' => $data->map(fn (TrendValue $value) => Carbon::parse($value->date)->format('M d')),
+            'labels' => $data,
         ];
     }
 
@@ -71,4 +74,4 @@ class RevenueChart extends ChartWidget
             ],
         ];
     }
-} 
+}

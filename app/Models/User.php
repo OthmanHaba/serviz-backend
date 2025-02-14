@@ -4,15 +4,16 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable;
-
-    protected $primaryKey = 'user_id';
+    use HasApiTokens, HasFactory,Notifiable;
 
     /**
      * The attributes that are mass assignable.
@@ -24,6 +25,7 @@ class User extends Authenticatable
         'phone',
         'password',
         'vehicle_info',
+        'role',
     ];
 
     /**
@@ -48,8 +50,23 @@ class User extends Authenticatable
         ];
     }
 
-    public function serviceRequests()
+    public function providerServices(): HasMany
     {
-        return $this->hasMany(ServiceRequest::class, 'user_id');
+        return $this->hasMany(ProviderService::class);
     }
+
+    public function currentLocation(): HasOne
+    {
+        return $this->hasOne(Location::class)->latestOfMany();
+    }
+
+    public function userActiveRequests()
+    {
+        return $this->hasMany(ActiveRequest::class,'user_id');
+    }
+    public function providerActiveRequests()
+    {
+        return $this->hasMany(ActiveRequest::class,'provider_id');
+    }
+
 }

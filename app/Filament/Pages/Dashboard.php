@@ -2,12 +2,12 @@
 
 namespace App\Filament\Pages;
 
-use Filament\Pages\Dashboard as BaseDashboard;
-use App\Filament\Widgets\StatsOverview;
-use App\Filament\Widgets\ServiceRequestsChart;
-use App\Filament\Widgets\LatestServiceRequests;
 use App\Filament\Widgets\ActiveProvidersMap;
+use App\Filament\Widgets\LatestServiceRequests;
 use App\Filament\Widgets\RevenueChart;
+use App\Filament\Widgets\ServiceRequestsChart;
+use App\Filament\Widgets\StatsOverview;
+use Filament\Pages\Dashboard as BaseDashboard;
 
 class Dashboard extends BaseDashboard
 {
@@ -31,4 +31,4 @@ class Dashboard extends BaseDashboard
             RevenueChart::class,
         ];
     }
-} 
+}

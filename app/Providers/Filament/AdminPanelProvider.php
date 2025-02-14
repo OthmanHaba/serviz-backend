@@ -17,10 +17,6 @@ use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
-use App\Filament\Pages\Dashboard;
-use App\Filament\Pages\Monitoring;
-use App\Filament\Pages\Reports;
-use App\Filament\Pages\Settings;
 
 class AdminPanelProvider extends PanelProvider
 {
