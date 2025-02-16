@@ -14,9 +14,10 @@ return new class extends Migration
     {
         Schema::create('active_request', function (Blueprint $table) {
             $table->id();
-            $table->foreignIdFor(User::class,'user_id');
-            $table->foreignIdFor(User::class , 'provider_id');
+            $table->foreignIdFor(User::class, 'user_id');
+            $table->foreignIdFor(User::class, 'provider_id');
             $table->decimal('price');
+            $table->string('status')->default('pending');
             $table->timestamps();
         });
     }
