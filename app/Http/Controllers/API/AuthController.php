@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\API;
 
 use App\Http\Controllers\Controller;
+use App\Models\ExpoTokens;
 use App\Services\AuthService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -74,4 +75,21 @@ class AuthController extends Controller
 
         return response()->json(['message' => 'Logged out successfully']);
     }
+
+    public function storeExpoToken(Request $request)
+    {
+        $request->validate([
+            'token' => 'required|string',
+        ]);
+
+        $authUser = auth()->user();
+
+        ExpoTokens::create([
+            'user_id' => $authUser->id,
+            'token' => $request->token,
+        ]);
+
+        return response()->json(['message' => 'Token stored successfully']);
+    }
+
 }

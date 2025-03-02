@@ -39,7 +39,10 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::prefix('service')->group(function () {
         Route::post('lockup-service', [ServiceController::class, 'lockUp']);
+        Route::post('user/conform-service',[ServiceController::class,'userApproveRequest']);
     });
+
+    Route::post('/expo-token', [AuthController::class, 'storeExpoToken']);
 });
 
 // Route::get('/reverb/auth', function () {

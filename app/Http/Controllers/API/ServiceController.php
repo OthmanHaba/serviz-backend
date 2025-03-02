@@ -67,4 +67,32 @@ class ServiceController extends Controller
             'active_request' => $activeRequest,
         ], ResponseCode::Success->value);
     }
+
+    public function userApproveRequest(Request $request)
+    {
+        $request->validate([
+            'active_request_id' => 'required|exists:' . ActiveRequest::class . ',id',
+        ]);
+
+        $activeRequest = ActiveRequest::find($request->active_request_id);
+
+        $activeRequest->update([
+            'status' => ServiceStatus::PendingProviderApproved,
+        ]);
+
+        $provider = $activeRequest->provider_id;
+
+        $provider = User::find($provider);
+
+//        $provider->noti
+
+
+
+        //TODO notify the provider
+
+
+        return response()->json([
+            'message' => 'Request approved',
+        ], ResponseCode::Success->value);
+    }
 }
