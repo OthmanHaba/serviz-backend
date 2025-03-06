@@ -31,6 +31,7 @@ class User extends Authenticatable
     protected $relations = [
         'expoToken',
     ];
+
     /**
      * The attributes that should be hidden for serialization.
      *
@@ -55,7 +56,7 @@ class User extends Authenticatable
 
     public function providerServices(): HasMany
     {
-        return $this->hasMany(ProviderService::class,'user_id');
+        return $this->hasMany(ProviderService::class, 'user_id');
     }
 
     public function currentLocation(): HasOne
@@ -63,12 +64,12 @@ class User extends Authenticatable
         return $this->hasOne(Location::class)->latestOfMany();
     }
 
-    public function userActiveRequests()
+    public function userActiveRequests(): User|HasMany
     {
         return $this->hasMany(ActiveRequest::class, 'user_id');
     }
 
-    public function providerActiveRequests()
+    public function providerActiveRequests(): User|HasMany
     {
         return $this->hasMany(ActiveRequest::class, 'provider_id');
     }

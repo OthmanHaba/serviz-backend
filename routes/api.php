@@ -35,14 +35,28 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/active-providers', [ProviderController::class, 'activeProviders']);
         Route::post('/toggle-active', [ProviderController::class, 'toggleActive']);
         Route::post('/update-location', [ProviderController::class, 'updateLocation']);
+        Route::post('/update-expo-token', function (Request $req) {
+            $req->validate([
+                'token' => 'string|required',
+            ]);
+
+            Auth::user()->expoToken()->firstOrCreate([
+                'token' => $req->token,
+            ]);
+        });
+
+        Route::get('/active-request', [ProviderController::class, 'getActiveRequests']);
     });
 
     Route::prefix('service')->group(function () {
         Route::post('lockup-service', [ServiceController::class, 'lockUp']);
-        Route::post('user/conform-service',[ServiceController::class,'userApproveRequest']);
+        Route::post('user/conform-service', [ServiceController::class, 'userApproveRequest']);
+
+        Route::get('track/get-status', [ServiceController::class, 'getStatus']);
     });
 
     Route::post('/expo-token', [AuthController::class, 'storeExpoToken']);
+
 });
 
 // Route::get('/reverb/auth', function () {

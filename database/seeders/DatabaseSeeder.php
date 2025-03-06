@@ -15,15 +15,43 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         User::factory()->create([
-            'name' => 'Test User',
+            'name' => 'admin',
             'email' => 'admin@admin.com',
+            'role' => 'admin',
+        ]);
+
+        $provider = User::factory()->create([
+            'name' => 'provider',
+            'email' => 'user@provider.com',
+            'role' => 'provider',
+        ]);
+
+        User::factory()->create([
+            'name' => 'user',
+            'email' => 'user@user.com',
+            'role' => 'user',
         ]);
 
         $this->createServiceType();
 
+        $provider->providerServices()->createMany([
+            [
+                'servic_type_id' => 1,
+                'price' => 100,
+            ],
+            [
+                'servic_type_id' => 2,
+                'price' => 200,
+            ],
+            [
+                'servic_type_id' => 3,
+                'price' => 300,
+            ],
+        ]);
+
     }
 
-    private function createServiceType()
+    private function createServiceType(): void
     {
         ServicType::create([
             'name' => 'Towing',

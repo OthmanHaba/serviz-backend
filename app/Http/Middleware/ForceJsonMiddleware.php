@@ -15,9 +15,10 @@ class ForceJsonMiddleware
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if($request->is('api/*')){
+        if ($request->is('api/*')) {
             $request->headers->set('Accept', 'application/json');
         }
+
         return $next($request);
     }
 }

@@ -6,7 +6,6 @@ use App\Enums\ResponseCode;
 use App\Enums\ServiceStatus;
 use App\Http\Controllers\Controller;
 use App\Models\ActiveRequest;
-use App\Models\ProviderService;
 use App\Models\ServicType;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
@@ -19,7 +18,7 @@ class ServiceController extends Controller
     public function lockUp(Request $request): JsonResponse
     {
         $validator = Validator::make($request->all(), [
-            'service_id' => 'required|exists:' . ServicType::class . ',id',
+            'service_id' => 'required|exists:'.ServicType::class.',id',
             'coordinate' => 'required|array',
             'coordinate.latitude' => 'required|numeric',
             'coordinate.longitude' => 'required|numeric',
@@ -29,13 +28,24 @@ class ServiceController extends Controller
             return response()->json($validator->errors(), 401);
         }
 
+        $latitude = $request->coordinate['latitude'];
+        $longitude = $request->coordinate['longitude'];
+        $radius = 5; // 5 km
+
+
         $availableProviderWithService = User::whereRole('provider')
             ->whereisActive(true)
             ->whereHas('providerServices', function (Builder $query) use ($request) {
                 $query->where('servic_type_id', $request->service_id);
             })
-            ->whereHas('currentLocation', function ($q) use ($request) {
-                //TODO: add the distance filter
+            ->whereHas('currentLocation', function ($query) use ($latitude, $longitude, $radius) {
+                // filter by distance and only get the provider within 5km
+                $query->whereRaw(
+                    '(6371 * acos(cos((? * pi() / 180)) * cos((CAST(latitude AS DOUBLE PRECISION) * pi() / 180))
+                            * cos((CAST(longitude AS DOUBLE PRECISION) * pi() / 180) - (? * pi() / 180)) + sin((? * pi() / 180))
+                            * sin((CAST(latitude AS DOUBLE PRECISION) * pi() / 180)))) <= ?',
+                    [$latitude, $longitude, $latitude, $radius]
+                );
             })
             ->with('currentLocation')
             ->doesntHave('providerActiveRequests')
@@ -56,11 +66,12 @@ class ServiceController extends Controller
                 ->providerServices
                 ->where('servic_type_id', $request->service_id)->first()->price,
             'status' => ServiceStatus::PendingUserApproved,
+            'service_id' => $request->service_id,
         ]);
 
         $activeRequest = ActiveRequest::latest()->first();
 
-        //TODO notify the provider
+        // TODO notify the provider
 
         return response()->json([
             'provider' => $provider,
@@ -71,7 +82,7 @@ class ServiceController extends Controller
     public function userApproveRequest(Request $request)
     {
         $request->validate([
-            'active_request_id' => 'required|exists:' . ActiveRequest::class . ',id',
+            'active_request_id' => 'required|exists:'.ActiveRequest::class.',id',
         ]);
 
         $activeRequest = ActiveRequest::find($request->active_request_id);
@@ -84,15 +95,23 @@ class ServiceController extends Controller
 
         $provider = User::find($provider);
 
-//        $provider->noti
+        // $provider->noti
 
-
-
-        //TODO notify the provider
-
+        // TODO notify the provider
 
         return response()->json([
             'message' => 'Request approved',
         ], ResponseCode::Success->value);
+    }
+
+    public function getStatus(Request $request)
+    {
+        $request->validate([
+            'active_request_id' => 'required|exists:'.ActiveRequest::class.',id',
+        ]);
+        $request = ActiveRequest::find($request->active_request_id)
+            ->load(['provider.currentLocation', 'user.currentLocation']);
+
+        return response()->json($request, ResponseCode::Success->value);
     }
 }

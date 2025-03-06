@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\ServicType;
 use App\Models\User;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
@@ -16,6 +17,7 @@ return new class extends Migration
             $table->id();
             $table->foreignIdFor(User::class, 'user_id');
             $table->foreignIdFor(User::class, 'provider_id');
+            $table->foreignIdFor(ServicType::class, 'service_id');
             $table->decimal('price');
             $table->string('status')->default('pending');
             $table->timestamps();

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Enums\ServiceStatus;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\Pivot;
 
 class ActiveRequest extends Pivot
@@ -16,6 +17,7 @@ class ActiveRequest extends Pivot
             'status' => ServiceStatus::class,
         ];
     }
+
     public function user()
     {
         return $this->belongsTo(User::class, 'user_id');
@@ -24,5 +26,10 @@ class ActiveRequest extends Pivot
     public function provider()
     {
         return $this->belongsTo(User::class, 'provider_id');
+    }
+
+    public function service(): BelongsTo
+    {
+        return $this->belongsTo(ServicType::class);
     }
 }

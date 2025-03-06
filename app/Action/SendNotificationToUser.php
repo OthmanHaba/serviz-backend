@@ -8,13 +8,15 @@ use Illuminate\Support\Facades\Http;
 
 class SendNotificationToUser
 {
-
     public function __construct()
     {
         //
     }
 
-    public function __invoke(User $user,string $title, string $body)
+    /**
+     * @throws ConnectionException
+     */
+    public function __invoke(User $user, string $title, string $body)
     {
         $notification = [
             'title' => $title,
@@ -36,7 +38,6 @@ class SendNotificationToUser
             'title' => $notification['title'],
             'body' => $notification['body'],
         ]);
-
 
     }
 }

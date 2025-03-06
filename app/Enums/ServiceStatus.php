@@ -4,9 +4,9 @@ namespace App\Enums;
 
 enum ServiceStatus
 {
-    case PendingUserApproved ;
-    case PendingProviderApproved ;
-    case InProgress ;
-    case Completed ;
+    case PendingUserApproved;
+    case PendingProviderApproved;
+    case InProgress;
+    case Completed;
 
 }

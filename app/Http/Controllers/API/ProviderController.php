@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\ActiveRequestResource;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -68,5 +69,20 @@ class ProviderController extends Controller
         ]);
 
         return response()->json(['message' => 'Location updated successfully']);
+    }
+
+    public function getActiveRequests(Request $request)
+    {
+        $user = Auth::user();
+
+        $requests = $user
+            ->providerActiveRequests()
+            ->with([
+                'user.currentLocation',
+                'service'
+            ])
+            ->get();
+
+        return response()->json(ActiveRequestResource::collection($requests));
     }
 }
