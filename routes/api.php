@@ -52,7 +52,12 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('lockup-service', [ServiceController::class, 'lockUp']);
         Route::post('user/conform-service', [ServiceController::class, 'userApproveRequest']);
 
-        Route::get('track/get-status', [ServiceController::class, 'getStatus']);
+        Route::get('track/get-status', [ServiceController::class, 'getStatus'])
+        ->name('service.track');
+
+        Route::post('provider/conform-service', [ServiceController::class, 'providerApproveOrDeclineRequest']);
+
+        Route::get('user/refresh-active-request', [\App\Http\Controllers\API\UserController::class, 'refreshActiveRequest']);
     });
 
     Route::post('/expo-token', [AuthController::class, 'storeExpoToken']);

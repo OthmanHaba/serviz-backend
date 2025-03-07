@@ -104,6 +104,28 @@ class ServiceController extends Controller
         ], ResponseCode::Success->value);
     }
 
+    public function providerApproveOrDeclineRequest(Request $request)
+    {
+        $request->validate([
+            'active_request_id' => 'required|exists:'.ActiveRequest::class.',id',
+            'status' => 'required|in:approved,declined',
+        ]);
+
+        $activeRequest = ActiveRequest::find($request->active_request_id);
+
+        if ($request->status === 'approved') {
+            $activeRequest->update([
+                'status' => ServiceStatus::InProgress,
+            ]);
+        } else {
+            $activeRequest->delete();
+        }
+
+        return response()->json([
+            'message' => 'Request '.$request->status,
+        ], ResponseCode::Success->value);
+    }
+
     public function getStatus(Request $request)
     {
         $request->validate([

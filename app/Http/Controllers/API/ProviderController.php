@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Enums\ServiceStatus;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\ActiveRequestResource;
 use App\Models\User;
@@ -77,6 +78,7 @@ class ProviderController extends Controller
 
         $requests = $user
             ->providerActiveRequests()
+            ->whereStatus(ServiceStatus::PendingProviderApproved)
             ->with([
                 'user.currentLocation',
                 'service'
