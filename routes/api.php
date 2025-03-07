@@ -58,14 +58,9 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('provider/conform-service', [ServiceController::class, 'providerApproveOrDeclineRequest']);
 
         Route::get('user/refresh-active-request', [\App\Http\Controllers\API\UserController::class, 'refreshActiveRequest']);
+        Route::post('active-request/complete', [ProviderController::class, 'completeActiveRequest']);
     });
 
     Route::post('/expo-token', [AuthController::class, 'storeExpoToken']);
 
 });
-
-// Route::get('/reverb/auth', function () {
-//     $client = new \Reverb\Client(env('REVERB_APP_ID'), env('REVERB_APP_KEY'), env('REVERB_APP_SECRET'));
-//     $authUrl = $client->getAuthorizationUrl();
-//     return redirect($authUrl);
-// });

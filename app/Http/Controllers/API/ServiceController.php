@@ -48,7 +48,9 @@ class ServiceController extends Controller
                 );
             })
             ->with('currentLocation')
-            ->doesntHave('providerActiveRequests')
+            ->doesntHave('providerActiveRequests','and',function ($query) {
+                $query->where('status', ServiceStatus::InProgress);
+            })
             ->get();
 
         if ($availableProviderWithService->isEmpty()) {
@@ -123,6 +125,7 @@ class ServiceController extends Controller
 
         return response()->json([
             'message' => 'Request '.$request->status,
+            'id' => $activeRequest->id,
         ], ResponseCode::Success->value);
     }
 

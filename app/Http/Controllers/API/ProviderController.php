@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Enums\ServiceStatus;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\ActiveRequestResource;
+use App\Models\ActiveRequest;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -86,5 +87,20 @@ class ProviderController extends Controller
             ->get();
 
         return response()->json(ActiveRequestResource::collection($requests));
+    }
+
+    public function completeActiveRequest(Request $req)
+    {
+        $req->validate([
+            'active_request_id' => 'required|exists:'.ActiveRequest::class.',id',
+        ]);
+
+        $ActiveRequest = ActiveRequest::find($req->active_request_id);
+
+        $ActiveRequest->update([
+            'status' => ServiceStatus::Completed,
+        ]);
+
+        return response()->json(['message' => 'Request completed successfully']);
     }
 }
