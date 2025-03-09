@@ -37,4 +37,24 @@ class UserController extends Controller
 
         return response()->json([], 204);
     }
+
+    public function history()
+    {
+        $user = Auth::user();
+
+        $requests = $user->role == 'provider' ? $user
+            ->load('providerActiveRequests')
+            ->providerActiveRequests
+            ->load([
+                'user', 'provider', 'service',
+            ]) :
+            $user
+                ->load('userActiveRequests')
+                ->userActiveRequests
+                ->load([
+                    'user', 'provider', 'service',
+                ]);
+
+        return response()->json($requests);
+    }
 }

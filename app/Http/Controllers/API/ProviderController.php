@@ -101,6 +101,12 @@ class ProviderController extends Controller
             'status' => ServiceStatus::Completed,
         ]);
 
+        $provider = User::find($ActiveRequest->provider_id);
+
+        $user = User::find($ActiveRequest->user_id);
+
+        $user->wallet->transfer($provider->wallet, $ActiveRequest->price);
+
         return response()->json(['message' => 'Request completed successfully']);
     }
 }

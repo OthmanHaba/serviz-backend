@@ -3,21 +3,19 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\ActiveRequestResource\Pages;
-use App\Filament\Resources\ActiveRequestResource\RelationManagers;
 use App\Models\ActiveRequest;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class ActiveRequestResource extends Resource
 {
     protected static ?string $model = ActiveRequest::class;
 
     protected static ?string $navigationGroup = 'Service Management';
+
     protected static ?string $navigationIcon = 'heroicon-o-wrench-screwdriver';
 
     public static function form(Form $form): Form
@@ -64,12 +62,11 @@ class ActiveRequestResource extends Resource
                     ->sortable(),
 
                 Tables\Columns\TextColumn::make('service_fee')
-                    ->state(function(ActiveRequest $record){
+                    ->state(function (ActiveRequest $record) {
                         return $record->price * 0.3;
                     })
                     ->money()
                     ->sortable(),
-
 
                 Tables\Columns\TextColumn::make('status')
                     ->badge()

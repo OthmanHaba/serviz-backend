@@ -30,6 +30,7 @@ class User extends Authenticatable
 
     protected $relations = [
         'expoToken',
+        'wallet',
         'currentLocation',
     ];
 
@@ -83,5 +84,10 @@ class User extends Authenticatable
     public function wallet(): HasOne
     {
         return $this->hasOne(Wallet::class, 'user_id')->latestOfMany();
+    }
+
+    public function deposit($amount): void
+    {
+        $this->wallet()->firstOrCreate()->deposit($amount);
     }
 }

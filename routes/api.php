@@ -70,6 +70,10 @@ Route::middleware('auth:sanctum')->group(function () {
 
     });
 
+    Route::prefix('user')->group(function () {
+        Route::get('history', [\App\Http\Controllers\API\UserController::class, 'history']);
+    });
+
     Route::post('/expo-token', [AuthController::class, 'storeExpoToken']);
 
 });

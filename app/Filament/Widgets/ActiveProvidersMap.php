@@ -2,18 +2,16 @@
 
 namespace App\Filament\Widgets;
 
-use App\Models\Location;
 use App\Models\User;
-use Filament\Forms\Contracts\HasForms;
-use Filament\Forms\Form;
-use Filament\Forms;
 use Filament\Widgets\Widget;
 use Illuminate\Support\Collection;
 
 class ActiveProvidersMap extends Widget
 {
     protected static string $view = 'filament.widgets.active-providers-map';
+
     protected static ?int $sort = 4;
+
     protected int|string|array $columnSpan = 'full';
 
     public Collection $providers;
@@ -27,7 +25,7 @@ class ActiveProvidersMap extends Widget
     {
         return User::whereRole('provider')
             ->get()
-            ->filter(fn($provider) => $provider->currentLocation !== null);
+            ->filter(fn ($provider) => $provider->currentLocation !== null);
     }
 
     protected function getViewData(): array

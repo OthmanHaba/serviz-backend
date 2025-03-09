@@ -17,6 +17,7 @@ class ServiceController extends Controller
 {
     public function lockUp(Request $request): JsonResponse
     {
+
         $validator = Validator::make($request->all(), [
             'service_id' => 'required|exists:'.ServicType::class.',id',
             'coordinate' => 'required|array',
@@ -60,12 +61,20 @@ class ServiceController extends Controller
 
         $provider = $availableProviderWithService->first();
 
+        $price = $provider
+            ->providerServices
+            ->where('servic_type_id', $request->service_id)->first()->price;
+
+        if (auth()->user()->wallet->balance < $price) {
+            return response()->json([
+                'message' => 'low wallet balance service price is '.$price,
+            ], ResponseCode::NoContent->value);
+        }
+
         ActiveRequest::create([
             'user_id' => auth()->id(),
             'provider_id' => $provider->id,
-            'price' => $provider
-                ->providerServices
-                ->where('servic_type_id', $request->service_id)->first()->price,
+            'price' => $price,
             'status' => ServiceStatus::PendingUserApproved,
             'service_id' => $request->service_id,
         ]);

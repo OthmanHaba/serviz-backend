@@ -16,17 +16,17 @@ class ServiceRequestsChart extends ChartWidget
     protected function getData(): array
     {
 
-       $sampleData = Trend::model(ActiveRequest::class)
+        $sampleData = Trend::model(ActiveRequest::class)
             ->between(
                 start: Carbon::now()->startOfMonth(),
                 end: Carbon::now()->endOfMonth()
             )
-            ->perWeek()
+            ->perday()
             ->count();
 
-        $dates = $sampleData->map(fn ($data) => $data->date);
+        $dates = $sampleData->map(fn ($data) => Carbon::parse($data->date)->day);
 
-        $counts =  $sampleData->map(fn ($data) =>  $data->aggregate);
+        $counts = $sampleData->map(fn ($data) => $data->aggregate);
 
         return [
             'datasets' => [
@@ -44,32 +44,13 @@ class ServiceRequestsChart extends ChartWidget
         return 'line';
     }
 
-//    protected function getFilters(): ?array
-//    {
-//        return [
-//            'today' => 'Today',
-//            'week' => 'Last 7 days',
-//            'month' => 'This month',
-//            'year' => 'This year',
-//        ];
-//    }
-
-//    protected function getOptions(): array
-//    {
-//        return [
-//            'plugins' => [
-//                'legend' => [
-//                    'display' => false,
-//                ],
-//            ],
-//            'scales' => [
-//                'y' => [
-//                    'beginAtZero' => true,
-//                    'ticks' => [
-//                        'stepSize' => 1,
-//                    ],
-//                ],
-//            ],
-//        ];
-//    }
+    protected function getFilters(): ?array
+    {
+        return [
+            'today' => 'Today',
+            'week' => 'Last 7 days',
+            'month' => 'This month',
+            'year' => 'This year',
+        ];
+    }
 }

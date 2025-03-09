@@ -8,5 +8,5 @@ enum ResponseCode: int
     case NotFound = 404;
     case Unauthorized = 401;
     case Forbidden = 403;
-    case NoContent = 204;
+    case NoContent = 203;
 }

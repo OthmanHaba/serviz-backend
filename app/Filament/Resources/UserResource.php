@@ -125,12 +125,10 @@ class UserResource extends Resource
                                 ->minValue(1),
                         ])
                         ->action(function (User $record, array $data): void {
-                            $record->update([
-                                'password' => Hash::make($data['new_password']),
-                            ]);
+                            $record->deposit($data['amount']);
                         }),
                 ])
-                ->icon('heroicon-o-rectangle-group')
+                    ->icon('heroicon-o-rectangle-group'),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

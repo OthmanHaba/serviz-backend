@@ -27,6 +27,10 @@ class AuthService
                     $user->providerServices()->createMany($data['service_type']);
                 }
 
+                $user->wallet()->create([
+                    'balance' => 0,
+                ]);
+
                 return $user;
             });
         } catch (\Exception $e) {
@@ -44,7 +48,7 @@ class AuthService
         }
 
         /** @var User $user */
-        $user = Auth::user();
+        $user = Auth::user()->load('wallet');
 
         $token = $user->createToken('auth-token')->plainTextToken;
 

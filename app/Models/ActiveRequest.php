@@ -11,7 +11,6 @@ class ActiveRequest extends Pivot
 {
     use HasFactory;
 
-
     protected function casts(): array
     {
         return [
@@ -19,12 +18,12 @@ class ActiveRequest extends Pivot
         ];
     }
 
-    public function user() : BelongsTo
+    public function user(): BelongsTo
     {
         return $this->belongsTo(User::class, 'user_id');
     }
 
-    public function provider() : BelongsTo
+    public function provider(): BelongsTo
     {
         return $this->belongsTo(User::class, 'provider_id');
     }
