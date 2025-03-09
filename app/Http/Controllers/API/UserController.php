@@ -12,27 +12,25 @@ class UserController extends Controller
     {
         $user = Auth::user();
 
-        if($user->role == 'provider'){
+        if ($user->role == 'provider') {
             $activeRequest = $user->providerActiveRequests()
                 ->whereStatus(ServiceStatus::InProgress)
 //                ->orWhere('status',ServiceStatus::PendingProviderApproved)
                 ->first();
 
-            if($activeRequest) {
+            if ($activeRequest) {
                 return response()->json([
-                    'id' => $activeRequest->id
+                    'id' => $activeRequest->id,
                 ]);
             }
-        }
-        else if($user->role == 'user'){
+        } elseif ($user->role == 'user') {
             $activeRequest = $user->userActiveRequests()
                 ->whereStatus(ServiceStatus::InProgress)
                 ->first();
 
-
-            if($activeRequest) {
+            if ($activeRequest) {
                 return response()->json([
-                    'id' => $activeRequest->id
+                    'id' => $activeRequest->id,
                 ]);
             }
         }

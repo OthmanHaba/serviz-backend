@@ -30,6 +30,7 @@ class User extends Authenticatable
 
     protected $relations = [
         'expoToken',
+        'currentLocation',
     ];
 
     /**
@@ -77,5 +78,10 @@ class User extends Authenticatable
     public function expoToken(): HasOne
     {
         return $this->hasOne(ExpoTokens::class, 'user_id')->latestOfMany();
+    }
+
+    public function wallet(): HasOne
+    {
+        return $this->hasOne(Wallet::class, 'user_id')->latestOfMany();
     }
 }

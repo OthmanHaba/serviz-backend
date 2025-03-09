@@ -10,6 +10,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
+use Filament\Support\Colors\Color;
 use Filament\Tables;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\BulkAction;
@@ -57,13 +58,15 @@ class UserResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('user_id')
-                    ->sortable()
-                    ->searchable(),
                 TextColumn::make('email')
                     ->sortable()
                     ->searchable(),
                 TextColumn::make('phone')
+                    ->searchable(),
+                TextColumn::make('wallet.balance')
+                    ->label('Balance')
+                    ->default(0)
+                    ->money()
                     ->searchable(),
                 IconColumn::make('is_active')
                     ->boolean()
@@ -71,38 +74,63 @@ class UserResource extends Resource
                 TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable(),
-                TextColumn::make('last_login_at')
-                    ->dateTime()
-                    ->sortable(),
             ])
             ->filters([
                 SelectFilter::make('is_active')
+                    ->label('Status')
                     ->options([
                         '1' => 'Active',
                         '0' => 'Inactive',
                     ]),
+
+                SelectFilter::make('role')
+                    ->label('Role')
+                    ->options([
+                        'provider' => 'provider',
+                        'user' => 'user',
+                        'admin' => 'admin',
+                    ]),
             ])
             ->actions([
-                Tables\Actions\ViewAction::make(),
-                Tables\Actions\EditAction::make(),
-                Action::make('ban')
-                    ->icon('heroicon-o-x-mark')
-                    ->color('danger')
-                    ->requiresConfirmation()
-                    ->action(fn (User $record) => $record->update(['is_active' => false])),
-                Action::make('resetPassword')
-                    ->icon('heroicon-o-key')
-                    ->form([
-                        TextInput::make('new_password')
-                            ->password()
-                            ->required()
-                            ->minLength(8),
-                    ])
-                    ->action(function (User $record, array $data): void {
-                        $record->update([
-                            'password' => Hash::make($data['new_password']),
-                        ]);
-                    }),
+                Tables\Actions\ActionGroup::make([
+                    Tables\Actions\ViewAction::make(),
+                    Tables\Actions\EditAction::make(),
+                    Action::make('ban')
+                        ->icon('heroicon-o-x-mark')
+                        ->color('danger')
+                        ->requiresConfirmation()
+                        ->action(fn (User $record) => $record->update(['is_active' => false])),
+                    Action::make('resetPassword')
+                        ->icon('heroicon-o-key')
+                        ->form([
+                            TextInput::make('new_password')
+                                ->password()
+                                ->required()
+                                ->minLength(8),
+                        ])
+                        ->action(function (User $record, array $data): void {
+                            $record->update([
+                                'password' => Hash::make($data['new_password']),
+                            ]);
+                        }),
+
+                    Action::make('deposit')
+                        ->label('Deposit')
+                        ->icon('heroicon-o-currency-dollar')
+                        ->color(Color::Green)
+                        ->form([
+                            TextInput::make('amount')
+                                ->required()
+                                ->numeric()
+                                ->minValue(1),
+                        ])
+                        ->action(function (User $record, array $data): void {
+                            $record->update([
+                                'password' => Hash::make($data['new_password']),
+                            ]);
+                        }),
+                ])
+                ->icon('heroicon-o-rectangle-group')
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

@@ -1,79 +1,101 @@
-<x-filament-widgets::widget>
+<x-filament::widget>
     <x-filament::section>
-        <div
-            x-data="{
-                providers: @js($providers),
-                center: @js($center),
-                map: null,
-                markers: [],
-                initMap() {
-                    this.map = new google.maps.Map(this.$refs.map, {
-                        center: this.center,
-                        zoom: 12,
-                        styles: [
-                            {
-                                featureType: 'poi',
-                                elementType: 'labels',
-                                stylers: [{ visibility: 'off' }]
-                            }
-                        ]
-                    });
+        <x-slot name="heading">Active Providers Map</x-slot>
 
-                    this.providers.forEach(provider => {
-                        const marker = new google.maps.Marker({
-                            position: { lat: provider.lat, lng: provider.lng },
-                            map: this.map,
-                            title: provider.name,
-                            icon: {
-                                url: this.getMarkerIcon(provider.type),
-                                scaledSize: new google.maps.Size(32, 32)
-                            }
-                        });
+        <div>
+            <div id="mapLoading" class="p-4 text-center">Loading map...</div>
+            <div id="mapError" class="p-4 text-center text-red-500 hidden"></div>
 
-                        const infoWindow = new google.maps.InfoWindow({
-                            content: `
-                                <div class="p-2">
-                                    <h3 class="font-bold">${provider.name}</h3>
-                                    <p class="text-sm">${this.getProviderType(provider.type)}</p>
-                                </div>
-                            `
-                        });
-
-                        marker.addListener('click', () => {
-                            infoWindow.open(this.map, marker);
-                        });
-
-                        this.markers.push(marker);
-                    });
-                },
-                getMarkerIcon(type) {
-                    const icons = {
-                        tow_truck: '/images/tow-truck-marker.png',
-                        mechanic: '/images/mechanic-marker.png',
-                        gas_delivery: '/images/gas-marker.png'
-                    };
-                    return icons[type] || icons.tow_truck;
-                },
-                getProviderType(type) {
-                    const types = {
-                        tow_truck: 'Tow Truck',
-                        mechanic: 'Mechanic',
-                        gas_delivery: 'Gas Delivery'
-                    };
-                    return types[type] || type;
-                }
-            }"
-            x-init="initMap"
-            wire:poll.15s="$refresh"
-        >
-            <div
-                x-ref="map"
-                class="w-full h-[400px] rounded-lg"
-            ></div>
+            <div wire:ignore x-data="mapComponent()" x-init="$nextTick(() => initMap())">
+                <div x-ref="mapContainer" style="height: 500px; width: 100%;"></div>
+            </div>
         </div>
+
+        <x-slot name="footer">
+            <div class="flex justify-between items-center">
+                <span class="text-sm text-gray-500">
+                    Showing {{ count($providers) }} active providers
+                </span>
+                <x-filament::button wire:click="refreshProviders" icon="heroicon-o-arrow-path">
+                    Refresh Map
+                </x-filament::button>
+            </div>
+        </x-slot>
     </x-filament::section>
 
-    @push('scripts')
-        <script src="https://maps.googleapis.com/maps/api/js?key={{ config('services.google.maps_api_key') }}&libraries=places"></script>
-    @endpush
-</x-filament-widgets::widget> 
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+
+    <script>
+        window.mapComponent = function () {
+            return {
+                providers: @json($providers),
+                center: @json($center),
+                map: null,
+                markers: [],
+
+                initMap() {
+                    try {
+                        document.getElementById('mapLoading').style.display = 'none';
+
+                        const mapCenter = this.center?.lat && this.center?.lng
+                            ? [this.center.lat, this.center.lng]
+                            : [0, 0];
+
+                        this.map = L.map(this.$refs.mapContainer).setView(mapCenter, this.providers.length > 0 ? 10 : 2);
+
+                        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                        }).addTo(this.map);
+
+                        this.loadMarkers();
+                    } catch (error) {
+                        this.showError(error);
+                    }
+                },
+
+                loadMarkers() {
+                    this.clearMarkers();
+                    this.providers.forEach(provider => {
+                        if (provider.currentLocation) {
+                            this.addMarker(
+                                [parseFloat(provider.currentLocation.latitude), parseFloat(provider.currentLocation.longitude)],
+                                provider.name || 'Provider',
+                                provider.id
+                            );
+                        }
+                    });
+                },
+
+                addMarker(position, title, providerId) {
+                    const marker = L.marker(position).addTo(this.map);
+                    marker.bindPopup(`
+                        <div>
+                            <h3 style="font-weight: bold;">${title}</h3>
+                            <p>Provider ID: ${providerId}</p>
+                            <p>Latitude: ${position[0]}</p>
+                            <p>Longitude: ${position[1]}</p>
+                        </div>
+                    `);
+                    this.markers.push(marker);
+                },
+
+                clearMarkers() {
+                    this.markers.forEach(marker => this.map.removeLayer(marker));
+                    this.markers = [];
+                },
+
+                showError(error) {
+                    document.getElementById('mapError').textContent = `Error loading map: ${error.message}`;
+                    document.getElementById('mapError').classList.remove('hidden');
+                    document.getElementById('mapLoading').classList.add('hidden');
+                }
+            };
+        };
+
+        // Ensure initMap is accessible
+        window.initMap = function () {
+            document.querySelector('[x-data="mapComponent()"]').__x.$data.initMap();
+        };
+    </script>
+</x-filament::widget>

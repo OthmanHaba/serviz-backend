@@ -2,10 +2,10 @@
 
 namespace App\Filament\Widgets;
 
-use App\Models\ServiceRequest;
+use App\Models\ActiveRequest;
 use Filament\Widgets\ChartWidget;
 use Flowframe\Trend\Trend;
-use Flowframe\Trend\TrendValue;
+use Illuminate\Support\Carbon;
 
 class ServiceRequestsChart extends ChartWidget
 {
@@ -15,29 +15,27 @@ class ServiceRequestsChart extends ChartWidget
 
     protected function getData(): array
     {
-        // $data = Trend::model(ServiceRequest::class)
-        //     ->between(
-        //         start: now()->startOfMonth(),
-        //         end: now()->endOfMonth(),
-        //     )
-        //     ->perDay()
-        //     ->count();
 
-        $data = collect([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
+       $sampleData = Trend::model(ActiveRequest::class)
+            ->between(
+                start: Carbon::now()->startOfMonth(),
+                end: Carbon::now()->endOfMonth()
+            )
+            ->perWeek()
+            ->count();
+
+        $dates = $sampleData->map(fn ($data) => $data->date);
+
+        $counts =  $sampleData->map(fn ($data) =>  $data->aggregate);
 
         return [
             'datasets' => [
                 [
-                    'label' => 'Service Requests',
-                    // 'data' => $data->map(fn (TrendValue $value) => $value->aggregate),
-                    'data' => $data,
-                    'borderColor' => '#2563eb',
-                    'fill' => 'start',
-                    'backgroundColor' => 'rgba(37, 99, 235, 0.1)',
+                    'label' => 'Active Requests',
+                    'data' => $counts,
                 ],
             ],
-            // 'labels' => $data->map(fn (TrendValue $value) => $value->date),
-            'labels' => $data,
+            'labels' => $dates,
         ];
     }
 
@@ -46,32 +44,32 @@ class ServiceRequestsChart extends ChartWidget
         return 'line';
     }
 
-    protected function getFilters(): ?array
-    {
-        return [
-            'today' => 'Today',
-            'week' => 'Last 7 days',
-            'month' => 'This month',
-            'year' => 'This year',
-        ];
-    }
+//    protected function getFilters(): ?array
+//    {
+//        return [
+//            'today' => 'Today',
+//            'week' => 'Last 7 days',
+//            'month' => 'This month',
+//            'year' => 'This year',
+//        ];
+//    }
 
-    protected function getOptions(): array
-    {
-        return [
-            'plugins' => [
-                'legend' => [
-                    'display' => false,
-                ],
-            ],
-            'scales' => [
-                'y' => [
-                    'beginAtZero' => true,
-                    'ticks' => [
-                        'stepSize' => 1,
-                    ],
-                ],
-            ],
-        ];
-    }
+//    protected function getOptions(): array
+//    {
+//        return [
+//            'plugins' => [
+//                'legend' => [
+//                    'display' => false,
+//                ],
+//            ],
+//            'scales' => [
+//                'y' => [
+//                    'beginAtZero' => true,
+//                    'ticks' => [
+//                        'stepSize' => 1,
+//                    ],
+//                ],
+//            ],
+//        ];
+//    }
 }

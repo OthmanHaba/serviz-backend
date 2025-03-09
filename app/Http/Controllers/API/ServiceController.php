@@ -32,7 +32,6 @@ class ServiceController extends Controller
         $longitude = $request->coordinate['longitude'];
         $radius = 5; // 5 km
 
-
         $availableProviderWithService = User::whereRole('provider')
             ->whereisActive(true)
             ->whereHas('providerServices', function (Builder $query) use ($request) {
@@ -48,7 +47,7 @@ class ServiceController extends Controller
                 );
             })
             ->with('currentLocation')
-            ->doesntHave('providerActiveRequests','and',function ($query) {
+            ->doesntHave('providerActiveRequests', 'and', function ($query) {
                 $query->where('status', ServiceStatus::InProgress);
             })
             ->get();

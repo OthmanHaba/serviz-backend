@@ -82,7 +82,7 @@ class ProviderController extends Controller
             ->whereStatus(ServiceStatus::PendingProviderApproved)
             ->with([
                 'user.currentLocation',
-                'service'
+                'service',
             ])
             ->get();
 

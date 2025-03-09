@@ -2,9 +2,9 @@
 
 namespace App\Filament\Widgets;
 
+use App\Models\ActiveRequest;
 use App\Models\ServiceRequest;
 use Filament\Tables;
-use Filament\Tables\Columns\BadgeColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget as BaseWidget;
@@ -20,40 +20,26 @@ class LatestServiceRequests extends BaseWidget
     public function table(Table $table): Table
     {
         return $table
-            // ->query(
-            //     ServiceRequest::query()
-            //         ->latest('requested_at')
-            //         ->limit(5)
-            // )
+            ->query(
+                ActiveRequest::query()
+                    ->latest('created_at')
+                    ->limit(5)
+            )
             ->columns([
-                TextColumn::make('request_id')
+                TextColumn::make('provider.name')
+                    ->searchable()
                     ->sortable(),
-                TextColumn::make('user.email')
+
+                TextColumn::make('user.name')
                     ->label('User')
                     ->searchable(),
-                TextColumn::make('provider.name')
-                    ->label('Provider')
-                    ->searchable(),
-                BadgeColumn::make('service_type')
-                    ->colors([
-                        'primary' => 'tow_truck',
-                        'success' => 'mechanic',
-                        'warning' => 'gas_delivery',
-                    ]),
-                BadgeColumn::make('status')
-                    ->colors([
-                        'warning' => 'pending',
-                        'primary' => 'accepted',
-                        'info' => 'in_progress',
-                        'success' => 'completed',
-                        'danger' => 'cancelled',
-                    ]),
-                TextColumn::make('total_price')
-                    ->money('usd')
-                    ->sortable(),
-                TextColumn::make('requested_at')
-                    ->dateTime()
-                    ->sortable(),
+
+                TextColumn::make('status')
+                    ->badge(),
+
+                TextColumn::make('price')
+                    ->badge()
+                    ->label('Price'),
             ])
             // ->actions([
             //     Tables\Actions\Action::make('view')

@@ -32,10 +32,15 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
 
     Route::prefix('provider')->group(function () {
+
         Route::get('/active-providers', [ProviderController::class, 'activeProviders']);
+
         Route::post('/toggle-active', [ProviderController::class, 'toggleActive']);
+
         Route::post('/update-location', [ProviderController::class, 'updateLocation']);
+
         Route::post('/update-expo-token', function (Request $req) {
+
             $req->validate([
                 'token' => 'string|required',
             ]);
@@ -49,16 +54,20 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 
     Route::prefix('service')->group(function () {
+
         Route::post('lockup-service', [ServiceController::class, 'lockUp']);
+
         Route::post('user/conform-service', [ServiceController::class, 'userApproveRequest']);
 
         Route::get('track/get-status', [ServiceController::class, 'getStatus'])
-        ->name('service.track');
+            ->name('service.track');
 
         Route::post('provider/conform-service', [ServiceController::class, 'providerApproveOrDeclineRequest']);
 
         Route::get('user/refresh-active-request', [\App\Http\Controllers\API\UserController::class, 'refreshActiveRequest']);
+
         Route::post('active-request/complete', [ProviderController::class, 'completeActiveRequest']);
+
     });
 
     Route::post('/expo-token', [AuthController::class, 'storeExpoToken']);

@@ -13,7 +13,7 @@ class Dashboard extends BaseDashboard
 {
     protected static ?string $navigationIcon = 'heroicon-o-home';
 
-    protected static string $view = 'filament.pages.dashboard';
+    //    protected static string $view = 'filament.pages.dashboard';
 
     protected function getHeaderWidgets(): array
     {
@@ -27,7 +27,7 @@ class Dashboard extends BaseDashboard
         return [
             ServiceRequestsChart::class,
             LatestServiceRequests::class,
-            ActiveProvidersMap::class,
+//            ActiveProvidersMap::class,
             RevenueChart::class,
         ];
     }
