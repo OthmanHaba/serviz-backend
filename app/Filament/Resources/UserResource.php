@@ -3,12 +3,17 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\UserResource\Pages;
-use App\Filament\Resources\UserResource\RelationManagers;
 use App\Models\User;
 use Filament\Forms\Components\Card;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
+use Filament\Infolists\Components\Grid;
+use Filament\Infolists\Components\IconEntry;
+use Filament\Infolists\Components\RepeatableEntry;
+use Filament\Infolists\Components\Section;
+use Filament\Infolists\Components\TextEntry;
+use Filament\Infolists\Infolist;
 use Filament\Resources\Resource;
 use Filament\Support\Colors\Color;
 use Filament\Tables;
@@ -18,6 +23,7 @@ use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Hash;
 
@@ -30,6 +36,15 @@ class UserResource extends Resource
     protected static ?string $navigationGroup = 'User Management';
 
     protected static ?int $navigationSort = 1;
+
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()->with([
+            'wallet',
+            'providerServices',
+            'providerServices.serviceType',
+        ]);
+    }
 
     public static function form(Form $form): Form
     {
@@ -145,19 +160,81 @@ class UserResource extends Resource
             ->defaultSort('created_at', 'desc');
     }
 
-    public static function getRelations(): array
+    public static function infolist(Infolist $infolist): Infolist
     {
-        return [
-            RelationManagers\ServiceRequestsRelationManager::class,
-        ];
+        return $infolist
+            ->schema([
+                Section::make('User Information')
+                    ->columns(2)
+                    ->schema([
+                        Grid::make(2)
+                            ->schema([
+                                TextEntry::make('email')
+                                    ->label('Email')
+                                    ->copyable()
+                                    ->icon('heroicon-o-envelope-open'),
+
+                                TextEntry::make('phone')
+                                    ->label('Phone Number')
+                                    ->copyable()
+                                    ->icon('heroicon-o-phone'),
+                            ]),
+
+                        Grid::make(2)
+                            ->schema([
+                                TextEntry::make('wallet.balance')
+                                    ->label('Balance')
+                                    ->money()
+                                    ->icon('heroicon-o-currency-dollar')
+                                    ->badge(),
+
+                                IconEntry::make('is_active')
+                                    ->label('Active Status')
+                                    ->boolean()
+                                    ->trueIcon('heroicon-o-check-circle')
+                                    ->falseIcon('heroicon-o-x-circle')
+                                    ->trueColor('success')
+                                    ->falseColor('danger'),
+                            ]),
+                    ]),
+
+                Section::make('Additional Information')
+                    ->columns(2)
+                    ->schema([
+                        TextEntry::make('created_at')
+                            ->label('Created At')
+                            ->dateTime()
+                            ->icon('heroicon-o-calendar'),
+
+                        TextEntry::make('updated_at')
+                            ->label('Last Updated')
+                            ->dateTime()
+                            ->icon('heroicon-o-pencil'),
+                    ]),
+
+                Section::make('Provider Services')
+                    ->visible(fn (User $record) => $record->isProvider())
+                    ->columns(2)
+                    ->schema([
+                        RepeatableEntry::make('providerServices')
+                            ->schema([
+                                TextEntry::make('providerServices.serviceType.name')
+                                    ->label('Service Type'),
+
+                                TextEntry::make('providerServices.serviceType.price')
+                                    ->label('Service price'),
+
+                            ]),
+                    ]),
+            ]);
     }
 
     public static function getPages(): array
     {
         return [
             'index' => Pages\ListUsers::route('/'),
-            'create' => Pages\CreateUser::route('/create'),
-            'edit' => Pages\EditUser::route('/{record}/edit'),
+            //            'create' => Pages\CreateUser::route('/create'),
+            //            'edit' => Pages\EditUser::route('/{record}/edit'),
         ];
     }
 

@@ -57,4 +57,15 @@ class UserController extends Controller
 
         return response()->json($requests);
     }
+
+    public function profile()
+    {
+        $user = Auth::user()->load('wallet');
+
+        if ($user->isProvider()) {
+            $user->load('providerServices.serviceType');
+        }
+
+        return response()->json($user);
+    }
 }

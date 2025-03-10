@@ -11,6 +11,10 @@ class ProviderService extends Model
     /** @use HasFactory<\Database\Factories\ProviderServiceFactory> */
     use HasFactory;
 
+    protected $relations = [
+        'serviceType',
+    ];
+
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
@@ -18,6 +22,6 @@ class ProviderService extends Model
 
     public function serviceType(): BelongsTo
     {
-        return $this->belongsTo(ServicType::class);
+        return $this->belongsTo(ServicType::class, 'servic_type_id');
     }
 }

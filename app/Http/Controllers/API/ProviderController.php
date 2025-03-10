@@ -9,6 +9,7 @@ use App\Models\ActiveRequest;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
 class ProviderController extends Controller
@@ -89,23 +90,38 @@ class ProviderController extends Controller
         return response()->json(ActiveRequestResource::collection($requests));
     }
 
+    /**
+     * @throws \Throwable
+     * @throws \Exception
+     */
     public function completeActiveRequest(Request $req)
     {
         $req->validate([
             'active_request_id' => 'required|exists:'.ActiveRequest::class.',id',
         ]);
 
-        $ActiveRequest = ActiveRequest::find($req->active_request_id);
+        DB::transaction(function () use ($req) {
 
-        $ActiveRequest->update([
-            'status' => ServiceStatus::Completed,
-        ]);
+            $ActiveRequest = ActiveRequest::find($req->active_request_id);
 
-        $provider = User::find($ActiveRequest->provider_id);
+            $ActiveRequest->update([
+                'status' => ServiceStatus::Completed,
+            ]);
 
-        $user = User::find($ActiveRequest->user_id);
+            $provider = User::find($ActiveRequest->provider_id);
 
-        $user->wallet->transfer($provider->wallet, $ActiveRequest->price);
+            $user = User::find($ActiveRequest->user_id);
+
+            $user->wallet->transfer(
+                $ActiveRequest->price * 0.7,
+                $provider->wallet
+            );
+
+            $user->wallet->transfer(
+                $ActiveRequest->price * 0.3,
+                User::find(1)->wallet
+            );
+        });
 
         return response()->json(['message' => 'Request completed successfully']);
     }

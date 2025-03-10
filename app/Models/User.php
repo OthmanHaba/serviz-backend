@@ -90,4 +90,9 @@ class User extends Authenticatable
     {
         $this->wallet()->firstOrCreate()->deposit($amount);
     }
+
+    public function isProvider(): bool
+    {
+        return $this->role === 'provider';
+    }
 }
