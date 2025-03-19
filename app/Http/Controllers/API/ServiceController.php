@@ -78,6 +78,9 @@ class ServiceController extends Controller
             'status' => ServiceStatus::PendingUserApproved,
             'service_id' => $request->service_id,
         ]);
+        //[
+        // // name:  PendingUserApproved value = "PendingUserApproved"  'user_id' => auth()->id(),
+        //]
 
         $activeRequest = ActiveRequest::latest()->first();
 

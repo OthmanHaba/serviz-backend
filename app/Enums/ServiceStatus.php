@@ -9,6 +9,7 @@ use Filament\Support\Contracts\HasLabel;
 enum ServiceStatus implements HasColor, HasLabel
 {
     case PendingUserApproved;
+
     case PendingProviderApproved;
     case InProgress;
     case Completed;

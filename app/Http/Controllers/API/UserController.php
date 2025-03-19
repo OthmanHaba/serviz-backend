@@ -4,6 +4,7 @@ namespace App\Http\Controllers\API;
 
 use App\Enums\ServiceStatus;
 use App\Http\Controllers\Controller;
+use App\Models\ActiveRequest;
 use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
