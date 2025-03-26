@@ -58,7 +58,7 @@ class ProviderController extends Controller
     public function updateLocation(Request $request)
     {
         /**
-         * @var User
+         * @var User $user
          */
         $user = Auth::user();
         $request->validate([

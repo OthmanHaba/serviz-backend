@@ -4,7 +4,6 @@ namespace App\Http\Controllers\API;
 
 use App\Enums\ServiceStatus;
 use App\Http\Controllers\Controller;
-use App\Models\ActiveRequest;
 use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
@@ -16,7 +15,6 @@ class UserController extends Controller
         if ($user->role == 'provider') {
             $activeRequest = $user->providerActiveRequests()
                 ->whereStatus(ServiceStatus::InProgress)
-//                ->orWhere('status',ServiceStatus::PendingProviderApproved)
                 ->first();
 
             if ($activeRequest) {

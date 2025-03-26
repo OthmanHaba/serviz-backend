@@ -31,7 +31,7 @@ Route::middleware('auth:sanctum')->group(function () {
     // Auth routes
     Route::post('/logout', [AuthController::class, 'logout']);
 
-    Route::get('/profile',[\App\Http\Controllers\API\UserController::class,'profile']);
+    Route::get('/profile', [\App\Http\Controllers\API\UserController::class, 'profile']);
 
     Route::prefix('provider')->group(function () {
 
