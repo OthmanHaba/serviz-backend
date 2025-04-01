@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Api;
+namespace App\Http\Controllers\API;
 
 use App\Enums\ResponseCode;
 use App\Enums\ServiceStatus;
@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 
 class ServiceController extends Controller
 {
@@ -20,7 +21,7 @@ class ServiceController extends Controller
     {
 
         $validator = Validator::make($request->all(), [
-            'service_id' => 'required|exists:' . ServicType::class . ',id',
+            'service_id' => ['required', Rule::exists(ServicType::class, 'id')],
             'coordinate' => 'required|array',
             'coordinate.latitude' => 'required|numeric',
             'coordinate.longitude' => 'required|numeric',
@@ -125,6 +126,7 @@ class ServiceController extends Controller
             $activeRequest->update([
                 'status' => ServiceStatus::InProgress,
             ]);
+            event(new NewActiveRequestHasBeenCreated($activeRequest, $activeRequest->user));
         } else {
             $activeRequest->delete();
         }

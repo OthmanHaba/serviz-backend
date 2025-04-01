@@ -26,9 +26,8 @@ class Dashboard extends BaseDashboard
     {
         return [
             ServiceRequestsChart::class,
-            LatestServiceRequests::class,
-            //            ActiveProvidersMap::class,
             RevenueChart::class,
+            LatestServiceRequests::class,
         ];
     }
 }

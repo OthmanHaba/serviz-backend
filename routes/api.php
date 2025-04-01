@@ -1,9 +1,9 @@
 <?php
 
 use App\Http\Controllers\API\AuthController;
-use App\Http\Controllers\Api\ProviderController;
-use App\Http\Controllers\api\ServicController;
-use App\Http\Controllers\Api\ServiceController;
+use App\Http\Controllers\API\ProviderController;
+use App\Http\Controllers\API\ServicController;
+use App\Http\Controllers\API\ServiceController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
