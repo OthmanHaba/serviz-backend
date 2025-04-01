@@ -60,14 +60,15 @@ class UserResource extends Resource
                         ->required(),
                     TextInput::make('password')
                         ->password()
-                        ->dehydrateStateUsing(fn ($state) => Hash::make($state))
-                        ->dehydrated(fn ($state) => filled($state))
-                        ->required(fn (string $context): bool => $context === 'create'),
+                        ->dehydrateStateUsing(fn($state) => Hash::make($state))
+                        ->dehydrated(fn($state) => filled($state))
+                        ->required(fn(string $context): bool => $context === 'create'),
                     Toggle::make('is_active')
                         ->default(true),
                 ])->columns(2),
             ]);
     }
+
 
     public static function table(Table $table): Table
     {
@@ -111,10 +112,21 @@ class UserResource extends Resource
                     Tables\Actions\ViewAction::make(),
                     Tables\Actions\EditAction::make(),
                     Action::make('ban')
+                        ->hidden(fn(User $record) => $record->is_banned)
+                        ->hidden(fn(User $record) => $record->role === 'admin')
                         ->icon('heroicon-o-x-mark')
                         ->color('danger')
                         ->requiresConfirmation()
-                        ->action(fn (User $record) => $record->update(['is_active' => false])),
+                        ->action(fn(User $record) => $record->update(['is_banned' => true, 'is_active' => false])),
+
+                    Action::make('unban')
+                        ->hidden(fn(User $record) => $record->role === 'admin')
+                        ->hidden(fn(User $record) => !$record->is_banned)
+                        ->icon('heroicon-o-check')
+                        ->color('success')
+                        ->requiresConfirmation()
+                        ->action(fn(User $record) => $record->update(['is_active' => true, 'is_banned' => false])),
+
                     Action::make('resetPassword')
                         ->icon('heroicon-o-key')
                         ->form([
@@ -150,11 +162,11 @@ class UserResource extends Resource
                     Tables\Actions\DeleteBulkAction::make(),
                     BulkAction::make('activate')
                         ->icon('heroicon-o-check')
-                        ->action(fn (Collection $records) => $records->each->update(['is_active' => true])),
+                        ->action(fn(Collection $records) => $records->each->update(['is_active' => true])),
                     BulkAction::make('deactivate')
                         ->icon('heroicon-o-x-mark')
                         ->color('danger')
-                        ->action(fn (Collection $records) => $records->each->update(['is_active' => false])),
+                        ->action(fn(Collection $records) => $records->each->update(['is_active' => false])),
                 ]),
             ])
             ->defaultSort('created_at', 'desc');
@@ -213,7 +225,7 @@ class UserResource extends Resource
                     ]),
 
                 Section::make('Provider Services')
-                    ->visible(fn (User $record) => $record->isProvider())
+                    ->visible(fn(User $record) => $record->isProvider())
                     ->columns(2)
                     ->schema([
                         RepeatableEntry::make('providerServices')
