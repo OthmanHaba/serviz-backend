@@ -13,13 +13,13 @@ services:
       - DB_HOST=db
 
   db:
-    image: postgres
-    restart: always
+    image: postgres:14-alpine
+    ports:
+      - 5432:5432
     environment:
-      - POSTGRES_DB=postgres
+      - POSTGRES_PASSWORD=password
       - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=passsword
-      - POSTGRES_ROOT_PASSWORD=passsword
+      - POSTGRES_DB=serviz
     volumes:
       - dbdata:/var/lib/postgres
 
