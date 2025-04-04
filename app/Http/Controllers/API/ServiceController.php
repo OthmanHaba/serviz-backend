@@ -8,6 +8,7 @@ use App\Events\NewActiveRequestHasBeenCreated;
 use App\Http\Controllers\Controller;
 use App\Models\ActiveRequest;
 use App\Models\ServicType;
+use App\Models\Setting;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
@@ -33,7 +34,8 @@ class ServiceController extends Controller
 
         $latitude = $request->coordinate['latitude'];
         $longitude = $request->coordinate['longitude'];
-        $radius = 5; // 5 km
+//        $radius = 5; // 5 km
+        $radius = Setting::whereKey('Service_radio')->first()->value ?? 5;
 
         $availableProviderWithService = User::whereRole('provider')
             ->whereisActive(true)
