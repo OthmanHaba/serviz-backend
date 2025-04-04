@@ -5,6 +5,7 @@ services:
       dockerfile: Dockerfile
     ports:
       - "8000:80"
+      - "9000:8080"
     volumes:
       - .:/var/www/html
     depends_on:

@@ -60,6 +60,7 @@ COPY docker/nginx/default.conf /etc/nginx/sites-available/default
 
 # Expose port 80
 EXPOSE 80
+EXPOSE 8080
 
-# Start Nginx and PHP-FPM
-CMD service nginx start && php-fpm
+# Start Nginx and PHP-FPM and Reverb
+CMD ["sh", "-c", "service nginx start && php-fpm"]
