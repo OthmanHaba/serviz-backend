@@ -13,15 +13,15 @@ services:
       - DB_HOST=db
 
   db:
-    image: mysql
+    image: postgres
     restart: always
     environment:
-      - MYSQL_DATABASE=user
-      - MYSQL_USER=user
-      - MYSQL_PASSWORD=passsword
-      - MYSQL_ROOT_PASSWORD=passsword
+      - POSTGRES_DB=postgres
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=passsword
+      - POSTGRES_ROOT_PASSWORD=passsword
     volumes:
-      - dbdata:/var/lib/mysql
+      - dbdata:/var/lib/postgres
 
 volumes:
   dbdata:
