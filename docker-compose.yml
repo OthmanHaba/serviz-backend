@@ -17,8 +17,8 @@ services:
 
   db:
     image: postgres:14-alpine
-    ports:
-      - 5432:5432
+    # ports:
+    #   - 5432:5432
     environment:
       - POSTGRES_PASSWORD=password
       - POSTGRES_USER=postgres
@@ -28,8 +28,23 @@ services:
     networks:
       - app-db-network
 
+pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin4_container
+    restart: always
+    ports:
+      - "8888:80"
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: password
+    volumes:
+      - pgadmin-data:/var/lib/pgadmin
+    networks:
+      - app-db-network
+
 volumes:
   dbdata:
+  pgadmin-data:
 
 networks:
   app-db-network:
