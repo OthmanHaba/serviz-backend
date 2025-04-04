@@ -11,6 +11,9 @@ services:
       - db
     environment:
       - DB_HOST=db
+    networks:
+      - app-db-network
+
 
   db:
     image: postgres:14-alpine
@@ -22,6 +25,12 @@ services:
       - POSTGRES_DB=serviz
     volumes:
       - dbdata:/var/lib/postgres
+    networks:
+      - app-db-network
 
 volumes:
   dbdata:
+
+networks:
+  app-db-network:
+    driver: bridge
