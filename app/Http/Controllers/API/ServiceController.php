@@ -35,8 +35,9 @@ class ServiceController extends Controller
         $latitude = $request->coordinate['latitude'];
         $longitude = $request->coordinate['longitude'];
 //        $radius = 5; // 5 km
-        $radius = Setting::whereKey('Service_radio')->first()->value ?? 5;
+//        $radius = Setting::whereKey('Service_radio')->first()->value ?? 5;
 
+        $radius = 5;
         $availableProviderWithService = User::whereRole('provider')
             ->whereisActive(true)
             ->whereHas('providerServices', function (Builder $query) use ($request) {
