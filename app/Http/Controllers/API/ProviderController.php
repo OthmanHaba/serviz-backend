@@ -102,24 +102,23 @@ class ProviderController extends Controller
 
         DB::transaction(function () use ($req) {
 
-            $ActiveRequest = ActiveRequest::find($req->active_request_id);
+            $activeRequest = ActiveRequest::find($req->active_request_id);
 
-            $ActiveRequest->update([
+            $activeRequest->update([
                 'status' => ServiceStatus::Completed,
             ]);
 
-            $provider = User::with('wallet')
-                ->find($ActiveRequest->provider_id);
 
-            $user = User::find($ActiveRequest->user_id);
+
+            $user = $activeRequest->user;
 
             $user->wallet->transfer(
-                $ActiveRequest->price * 0.7,
-                $provider->wallet
+                $activeRequest->price * 0.7,
+                $activeRequest->provider
             );
 
             $user->wallet->transfer(
-                $ActiveRequest->price * 0.3,
+                $activeRequest->price * 0.3,
                 User::find(1)->wallet
             );
         });

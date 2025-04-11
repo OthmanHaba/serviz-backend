@@ -17,6 +17,10 @@ class ActiveRequest extends Pivot
             'status' => ServiceStatus::class,
         ];
     }
+    protected $relations = [
+        'user',
+        'provider'
+    ];
 
     public function user(): BelongsTo
     {
