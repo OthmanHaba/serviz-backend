@@ -95,4 +95,19 @@ class User extends Authenticatable
     {
         return $this->role === 'provider';
     }
+
+    public function sendPushNotification(string $title , string $body): void
+    {
+        if ($this->expoToken === null) {
+            return;
+        }
+
+        $expoToken = $this->expoToken->token;
+
+        Http::post('https://exp.host/--/api/v2/push/send', [
+            'to' => $expoToken,
+            'title' => $title,
+            'body' => $body,
+        ]);
+    }
 }

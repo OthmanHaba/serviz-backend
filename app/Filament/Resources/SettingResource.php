@@ -9,18 +9,17 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
 
 class SettingResource extends Resource
 {
     protected static ?string $model = Setting::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-cog';
-    
+
     protected static ?string $navigationLabel = 'Settings';
-    
+
     protected static ?string $navigationGroup = 'System';
-    
+
     protected static ?int $navigationSort = 100;
 
     public static function form(Form $form): Form
@@ -36,7 +35,7 @@ class SettingResource extends Resource
                             ->label('Setting Key')
                             ->helperText('Unique identifier for this setting')
                             ->disabled(fn ($record) => $record !== null),
-                            
+
                         Forms\Components\Select::make('type')
                             ->options([
                                 'text' => 'Text',
@@ -50,27 +49,27 @@ class SettingResource extends Resource
                             ->reactive()
                             ->label('Value Type')
                             ->disabled(fn ($record) => $record !== null),
-                            
+
                         Forms\Components\TextInput::make('value')
                             ->label('Value')
                             ->required()
                             ->visible(fn (Forms\Get $get) => in_array($get('type'), ['text', 'number']))
                             ->numeric(fn (Forms\Get $get) => $get('type') === 'number'),
-                            
+
                         Forms\Components\Toggle::make('value')
                             ->label('Value')
                             ->visible(fn (Forms\Get $get) => $get('type') === 'boolean'),
-                            
+
                         Forms\Components\TagsInput::make('value')
                             ->label('Value')
                             ->visible(fn (Forms\Get $get) => $get('type') === 'array'),
-                            
+
                         Forms\Components\Textarea::make('value')
                             ->label('Value')
                             ->visible(fn (Forms\Get $get) => $get('type') === 'json')
                             ->rows(5)
                             ->helperText('Enter valid JSON format'),
-                            
+
                         Forms\Components\Textarea::make('description')
                             ->label('Description')
                             ->rows(2)
@@ -88,18 +87,18 @@ class SettingResource extends Resource
                     ->label('Setting Key')
                     ->searchable()
                     ->sortable(),
-                    
+
                 Tables\Columns\TextColumn::make('value')
                     ->label('Value')
                     ->formatStateUsing(function ($state) {
                         if (is_array($state) || is_object($state)) {
                             return json_encode($state, JSON_PRETTY_PRINT);
                         }
-                        
+
                         if (is_bool($state)) {
                             return $state ? 'Yes' : 'No';
                         }
-                        
+
                         return (string) $state;
                     })
                     ->limit(50)
@@ -107,10 +106,10 @@ class SettingResource extends Resource
                         if (is_array($state) || is_object($state)) {
                             return json_encode($state, JSON_PRETTY_PRINT);
                         }
-                        
+
                         return (string) $state;
                     }),
-                    
+
                 Tables\Columns\TextColumn::make('description')
                     ->label('Description')
                     ->limit(30)

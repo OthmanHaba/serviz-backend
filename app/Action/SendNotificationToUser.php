@@ -16,28 +16,19 @@ class SendNotificationToUser
     /**
      * @throws ConnectionException
      */
-    public function __invoke(User $user, string $title, string $body)
+    public function __invoke(User $user, string $title, string $body): void
     {
-        $notification = [
-            'title' => $title,
-            'body' => $body,
-        ];
 
-        $expoToken = $user->expoToken->token;
+        if ($user->expoToken === null) {
+            return;
+        }
 
-        $this->sendNotification($expoToken, $notification);
-    }
+        $expoToken = $user->expoToken?->token;
 
-    /**
-     * @throws ConnectionException
-     */
-    private function sendNotification($expoToken, array $notification)
-    {
         Http::post('https://exp.host/--/api/v2/push/send', [
             'to' => $expoToken,
-            'title' => $notification['title'],
-            'body' => $notification['body'],
+            'title' => $title,
+            'body' => $body,
         ]);
-
     }
 }

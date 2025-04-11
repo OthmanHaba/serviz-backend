@@ -2,7 +2,6 @@
 
 namespace App\Filament\Pages;
 
-use App\Filament\Widgets\ActiveProvidersMap;
 use App\Filament\Widgets\LatestServiceRequests;
 use App\Filament\Widgets\RevenueChart;
 use App\Filament\Widgets\ServiceRequestsChart;

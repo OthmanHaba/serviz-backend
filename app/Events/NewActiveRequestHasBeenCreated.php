@@ -6,8 +6,6 @@ use App\Models\ActiveRequest;
 use App\Models\User;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
-use Illuminate\Broadcasting\PresenceChannel;
-use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
@@ -21,10 +19,8 @@ class NewActiveRequestHasBeenCreated implements ShouldBroadcast
      */
     public function __construct(
         public ActiveRequest $model,
-        public User          $user
-    )
-    {
-    }
+        public User $user
+    ) {}
 
     /**
      * Get the channels the event should broadcast on.
@@ -34,7 +30,7 @@ class NewActiveRequestHasBeenCreated implements ShouldBroadcast
     public function broadcastOn(): array
     {
         return [
-            new Channel('new-active-request.' . $this->user->id),
+            new Channel('new-active-request.'.$this->user->id),
         ];
     }
 }

@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\ServicType;
+use App\Models\Setting;
 use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -47,6 +48,11 @@ class DatabaseSeeder extends Seeder
                 'servic_type_id' => 3,
                 'price' => 300,
             ],
+        ]);
+
+        Setting::create([
+            'key' => 'Service_radio',
+            'value' => 5,
         ]);
 
     }
