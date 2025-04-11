@@ -33,7 +33,7 @@ class Wallet extends Model
         $this->save();
     }
 
-    public function transfer($amount, Wallet $receiver): void
+    public function transfer(float $amount, Wallet $receiver): void
     {
         $this->withdraw($amount);
         $receiver->deposit($amount);

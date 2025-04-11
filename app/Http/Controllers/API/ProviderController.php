@@ -113,12 +113,12 @@ class ProviderController extends Controller
             $user = $activeRequest->user;
 
             $user->wallet->transfer(
-                $activeRequest->price * 0.7,
-                $activeRequest->provider
+                (float) $activeRequest->price * 0.7,
+                $activeRequest->provider->wallet
             );
 
             $user->wallet->transfer(
-                $activeRequest->price * 0.3,
+                (float)$activeRequest->price * 0.3,
                 User::find(1)->wallet
             );
         });
