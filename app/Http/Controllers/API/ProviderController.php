@@ -108,7 +108,8 @@ class ProviderController extends Controller
                 'status' => ServiceStatus::Completed,
             ]);
 
-            $provider = User::find($ActiveRequest->provider_id);
+            $provider = User::with('wallet')
+                ->find($ActiveRequest->provider_id);
 
             $user = User::find($ActiveRequest->user_id);
 
