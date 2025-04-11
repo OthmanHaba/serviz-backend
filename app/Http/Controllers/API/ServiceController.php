@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\API;
 
-use App\Action\SendNotificationToUser;
 use App\Enums\ResponseCode;
 use App\Enums\ServiceStatus;
 use App\Events\NewActiveRequestHasBeenCreated;

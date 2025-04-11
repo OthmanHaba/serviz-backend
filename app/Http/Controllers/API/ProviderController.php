@@ -108,8 +108,6 @@ class ProviderController extends Controller
                 'status' => ServiceStatus::Completed,
             ]);
 
-
-
             $user = $activeRequest->user;
 
             $user->wallet->transfer(
@@ -118,7 +116,7 @@ class ProviderController extends Controller
             );
 
             $user->wallet->transfer(
-                (float)$activeRequest->price * 0.3,
+                (float) $activeRequest->price * 0.3,
                 User::find(1)->wallet
             );
         });

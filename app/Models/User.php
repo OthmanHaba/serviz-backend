@@ -96,7 +96,7 @@ class User extends Authenticatable
         return $this->role === 'provider';
     }
 
-    public function sendPushNotification(string $title , string $body): void
+    public function sendPushNotification(string $title, string $body): void
     {
         if ($this->expoToken === null) {
             return;
