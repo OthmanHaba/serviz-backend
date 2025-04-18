@@ -113,12 +113,21 @@ class ServiceController extends Controller
     {
         $request->validate([
             'active_request_id' => 'required|exists:' . ActiveRequest::class . ',id',
+            'action' => 'required|in:approve,decline',
         ]);
 
         $activeRequest = ActiveRequest::with([
             'user',
             'service',
         ])->find($request->active_request_id);
+
+        if ($request->action === 'decline') {
+            $activeRequest->delete();
+
+            return response()->json([
+                'message' => 'Request declined',
+            ], ResponseCode::Success->value);
+        }
 
         $activeRequest->update([
             'status' => ServiceStatus::PendingProviderApproved,
