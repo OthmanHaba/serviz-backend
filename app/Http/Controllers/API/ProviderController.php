@@ -140,7 +140,7 @@ class ProviderController extends Controller
             ->count();
 
 
-        $lastUpdateStatus = $user->updated_at;
+        $lastUpdateStatus = Carbon::parse($user->updated_at);
 
         //check if the updated at is from this day or not
         if ($lastUpdateStatus->isToday()) {
