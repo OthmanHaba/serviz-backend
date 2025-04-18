@@ -85,9 +85,14 @@ Route::middleware('auth:sanctum')->group(function () {
 
         $serviceId = $request->route('serviceId');
 
-        \App\Models\ProviderService::where('servic_type_id', $serviceId)
-            ->where('user_id', Auth::id())
-            ->delete();
+        $services = \App\Models\ProviderService::where('servic_type_id', $serviceId)
+            ->where('user_id', Auth::id());
+
+        \Illuminate\Support\Facades\Log::log(
+            'info',
+            'Deleting service with ID: ' . $serviceId . ' for user ID: ' . Auth::id()
+        );
+        $services->delete();
 
         return response()->noContent();
     });
