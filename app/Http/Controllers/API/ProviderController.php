@@ -169,7 +169,7 @@ class ProviderController extends Controller
 
 
         ProviderService::where('servic_type_id', $request->service_type_id)->firstOrCreate([
-            'provider_id' => Auth::id(),
+            'user_id' => Auth::id(),
             'price' => $request->price,
         ])->update([
             'price' => $request->price,
