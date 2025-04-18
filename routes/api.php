@@ -81,8 +81,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/provider/statistics', [\App\Http\Controllers\API\ProviderController::class, 'todayStatics']);
     Route::post('/provider/add-service', [ProviderController::class, 'addOrSaveService']);
 
-    Route::delete('/provider/services/{serviceId}',function ($serviceId){
+    Route::delete('/provider/services/{serviceId}',function (Request $request){
 
+
+        $serviceId = $request->route('serviceId');
         Auth::user()
             ->providerServices()
             ->where('servic_type_id', $serviceId)
