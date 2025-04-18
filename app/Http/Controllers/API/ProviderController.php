@@ -137,7 +137,7 @@ class ProviderController extends Controller
             ->sum('price');
 
         $totalRequests = $user->providerActiveRequests()
-            ->where('created_at', '=', now()->format('Y-m-d'))
+            ->whereDate('created_at', '=', now()->format('Y-m-d'))
             ->where('status', ServiceStatus::Completed)
             ->count();
 
