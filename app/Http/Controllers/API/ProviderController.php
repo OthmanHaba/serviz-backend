@@ -186,4 +186,6 @@ class ProviderController extends Controller
             'message' => 'Service added successfully',
         ]);
     }
+
+
 }
