@@ -141,11 +141,10 @@ class ProviderController extends Controller
             ->where('status', ServiceStatus::Completed)
             ->count();
 
-
         $lastUpdateStatus = Carbon::parse($user->updated_at);
 
         $workedHours = 0;
-        //check if the updated at is from this day or not
+        // check if the updated at is from this day or not
         if ($lastUpdateStatus->isToday()) {
             $workedHours = $lastUpdateStatus->diffInHours(now());
         }
@@ -167,13 +166,21 @@ class ProviderController extends Controller
             'price' => 'required|numeric',
         ]);
 
+        $prov = ProviderService::where('servic_type_id', $request->service_type_id)
+            ->where('user_id', Auth::id())
+            ->first();
 
-        ProviderService::where('servic_type_id', $request->service_type_id)->firstOrCreate([
-            'user_id' => Auth::id(),
-            'price' => $request->price,
-        ])->update([
-            'price' => $request->price,
-        ]);
+        if ($prov) {
+            $prov->update([
+                'price' => $request->price,
+            ]);
+        } else {
+
+            Auth::user()->providerServices()->create([
+                'servic_type_id' => $request->service_type_id,
+                'price' => $request->price,
+            ]);
+        }
 
         return response()->json([
             'message' => 'Service added successfully',
