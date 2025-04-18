@@ -80,5 +80,6 @@ Route::middleware('auth:sanctum')->group(function () {
 
 
     Route::get('/provider/statistics', [\App\Http\Controllers\API\ProviderController::class, 'todayStatics']);
+    Route::post('/provider/add-service', [ProviderController::class, 'addOrSaveService']);
 
 });

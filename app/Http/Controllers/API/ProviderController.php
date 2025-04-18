@@ -6,6 +6,8 @@ use App\Enums\ServiceStatus;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\ActiveRequestResource;
 use App\Models\ActiveRequest;
+use App\Models\ProviderService;
+use App\Models\ServicType;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
@@ -130,7 +132,7 @@ class ProviderController extends Controller
         $user = Auth::user();
 
         $totalRevenue = $user->providerActiveRequests()
-            ->where('created_at', '=', now()->format('Y-m-d'))
+            ->whereDate('created_at', '=', now()->format('Y-m-d'))
             ->where('status', ServiceStatus::Completed)
             ->sum('price');
 
@@ -156,5 +158,25 @@ class ProviderController extends Controller
         ];
 
         return response()->json($statics);
+    }
+
+    public function addOrSaveService(Request $request)
+    {
+        $request->validate([
+            'service_type_id' => 'required|exists:'.ServicType::class.',id',
+            'price' => 'required|numeric',
+        ]);
+
+
+        ProviderService::where('servic_type_id', $request->service_type_id)->firstOrCreate([
+            'provider_id' => Auth::id(),
+            'price' => $request->price,
+        ])->update([
+            'price' => $request->price,
+        ]);
+
+        return response()->json([
+            'message' => 'Service added successfully',
+        ]);
     }
 }
