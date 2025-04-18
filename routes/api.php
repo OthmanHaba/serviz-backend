@@ -83,11 +83,10 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::delete('/provider/services/{serviceId}',function (Request $request){
 
-
         $serviceId = $request->route('serviceId');
-        Auth::user()
-            ->providerServices()
-            ->where('servic_type_id', $serviceId)
+
+        \App\Models\ProviderService::where('servic_type_id', $serviceId)
+            ->where('user_id', Auth::id())
             ->delete();
 
         return response()->noContent();
