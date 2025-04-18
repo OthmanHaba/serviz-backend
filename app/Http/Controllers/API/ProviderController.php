@@ -142,14 +142,11 @@ class ProviderController extends Controller
 
         $lastUpdateStatus = Carbon::parse($user->updated_at);
 
+        $workedHours = 0;
         //check if the updated at is from this day or not
         if ($lastUpdateStatus->isToday()) {
-            $lastUpdateStatus = now();
-        } else {
-            $lastUpdateStatus = $lastUpdateStatus->format('Y-m-d H:i:s');
+            $workedHours = $lastUpdateStatus->diffInHours(now());
         }
-
-        $workedHours = Carbon::parse($lastUpdateStatus)->diffInHours(now());
 
         $statics = [
             'total_revenue' => $totalRevenue,
