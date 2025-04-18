@@ -8,6 +8,7 @@ use App\Http\Resources\ActiveRequestResource;
 use App\Models\ActiveRequest;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
@@ -122,5 +123,35 @@ class ProviderController extends Controller
         });
 
         return response()->json(['message' => 'Request completed successfully']);
+    }
+
+    public function todayStatics()
+    {
+        $user = Auth::user();
+
+        $totalRevenue = $user->providerActiveRequests()
+            ->where('created_at', '=', now()->format('Y-m-d'))
+            ->where('status', ServiceStatus::Completed)
+            ->sum('price');
+
+        $totalRequests = $user->providerActiveRequests()
+            ->where('created_at', '=', now()->format('Y-m-d'))
+            ->where('status', ServiceStatus::Completed)
+            ->count();
+
+        $lastUpdateStatus = $user->where('created_at', '=', now()->format('Y-m-d'))
+            ->where('updated_at', '=', now()->format('Y-m-d'))
+            ->updated_at;
+
+        $workedHours = Carbon::parse($lastUpdateStatus)->diffInHours(now());
+
+        $statics = [
+            'total_revenue' => $totalRevenue,
+            'total_requests' => $totalRequests,
+            'total_worked_hours' => $workedHours,
+            'total_rates' => 0,
+        ];
+
+        return response()->json($statics);
     }
 }

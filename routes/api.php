@@ -78,4 +78,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::post('/expo-token', [AuthController::class, 'storeExpoToken']);
 
+
+    Route::get('/provider/statistics', [\App\Http\Controllers\API\ProviderController::class, 'todayStatics']);
+
 });
