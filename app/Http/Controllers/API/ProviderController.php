@@ -139,9 +139,15 @@ class ProviderController extends Controller
             ->where('status', ServiceStatus::Completed)
             ->count();
 
-        $lastUpdateStatus = $user->where('created_at', '=', now()->format('Y-m-d'))
-            ->where('updated_at', '=', now()->format('Y-m-d'))
-            ->updated_at;
+
+        $lastUpdateStatus = $user->updated_at;
+
+        //check if the updated at is from this day or not
+        if ($lastUpdateStatus->isToday()) {
+            $lastUpdateStatus = now();
+        } else {
+            $lastUpdateStatus = $lastUpdateStatus->format('Y-m-d H:i:s');
+        }
 
         $workedHours = Carbon::parse($lastUpdateStatus)->diffInHours(now());
 
