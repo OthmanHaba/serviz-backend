@@ -60,20 +60,20 @@ class DatabaseSeeder extends Seeder
     private function createServiceType(): void
     {
         ServicType::create([
-            'name' => 'Towing',
-            'description' => 'Towing services',
+            'name' => 'سحب السيارات',
+            'description' => 'خدمات سحب السيارات',
             'image' => 'https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png',
         ]);
 
         ServicType::create([
-            'name' => 'Mobile Repair',
-            'description' => 'Mobile Repair services',
+            'name' => 'إصلاح متنقل',
+            'description' => 'خدمات إصلاح متنقل',
             'image' => 'https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png',
         ]);
 
         ServicType::create([
-            'name' => 'Repair Tires',
-            'description' => 'Repair Tires services',
+            'name' => 'إصلاح الإطارات',
+            'description' => 'خدمات إصلاح الإطارات',
             'image' => 'https://www.google.com/images/branding/googlelogo/1x/googlelogo_color_272x92dp.png',
         ]);
 

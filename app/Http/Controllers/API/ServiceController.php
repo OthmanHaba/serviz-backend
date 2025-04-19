@@ -86,7 +86,7 @@ class ServiceController extends Controller
 
         if (auth()->user()->wallet->balance < $price) {
             return response()->json([
-                'message' => 'low wallet balance service price is ' . $price,
+                'message' => 'low wallet balance service price is '.$price,
             ], ResponseCode::NoContent->value);
         }
 
@@ -112,7 +112,7 @@ class ServiceController extends Controller
     public function userApproveRequest(Request $request)
     {
         $request->validate([
-            'active_request_id' => 'required|exists:' . ActiveRequest::class . ',id',
+            'active_request_id' => 'required|exists:'.ActiveRequest::class.',id',
             'action' => 'required|in:approve,decline',
         ]);
 
@@ -142,7 +142,7 @@ class ServiceController extends Controller
         try {
             $provider->sendPushNotification(
                 'New Request',
-                'New request from ' . $activeRequest->user->name . ' for ' . $activeRequest->service->name
+                'New request from '.$activeRequest->user->name.' for '.$activeRequest->service->name
             );
         } catch (ConnectionException $e) {
             Log::error($e->getMessage());
@@ -156,7 +156,7 @@ class ServiceController extends Controller
     public function providerApproveOrDeclineRequest(Request $request)
     {
         $request->validate([
-            'active_request_id' => 'required|exists:' . ActiveRequest::class . ',id',
+            'active_request_id' => 'required|exists:'.ActiveRequest::class.',id',
             'status' => 'required|in:approved,declined',
         ]);
 
@@ -172,7 +172,7 @@ class ServiceController extends Controller
         }
 
         return response()->json([
-            'message' => 'Request ' . $request->status,
+            'message' => 'Request '.$request->status,
             'id' => $activeRequest->id,
         ], ResponseCode::Success->value);
     }
@@ -180,7 +180,7 @@ class ServiceController extends Controller
     public function getStatus(Request $request)
     {
         $request->validate([
-            'active_request_id' => 'required|exists:' . ActiveRequest::class . ',id',
+            'active_request_id' => 'required|exists:'.ActiveRequest::class.',id',
         ]);
         $request = ActiveRequest::find($request->active_request_id)
             ->load(['provider.currentLocation', 'user.currentLocation']);
