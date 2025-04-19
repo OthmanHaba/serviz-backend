@@ -20,6 +20,6 @@
         <x-filament::input wire:model="newMessage" placeholder="Type a message..."
                            class="w-full px-4 py-2 text-sm text-gray-700 bg-white border rounded-md focus:outline-none focus:ring focus:border-blue-300"/>
         <x-filament::button wire:click="sendNewMessage" class="ml-4">Send</x-filament::button>
-        <input type="hidden" wire:model="sessionId">
     </div>
+    <x-filament::button wire:click="setIsClosed" class="mt-4" color="danger">Close Support</x-filament::button>
 </div>
