@@ -105,4 +105,8 @@ Route::middleware('auth:sanctum')->group(function () {
         \App\Http\Controllers\SupportSessionController::class,'index'
     ]);
 
+    Route::get('/support/sessions/{session}',[
+        \App\Http\Controllers\SupportSessionController::class,'show'
+    ]);
+
 });
