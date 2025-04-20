@@ -35,7 +35,7 @@ class SupportSessionController extends Controller
     public function show(SupportSession $session)
     {
         return response()->json([
-            'session' => $session,
+            'session' => $session->get(),
             'messages' =>  $session->supportMessages()->with('sender')->get()
         ]);
     }
