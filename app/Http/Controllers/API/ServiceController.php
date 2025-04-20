@@ -35,6 +35,7 @@ class ServiceController extends Controller
         }
 
         $latitude = $request->coordinate['latitude'];
+        $longitude = $request->coordinate['longitude'];
 
         $radius = Setting::where('key', 'Service_radio');
 
@@ -44,7 +45,6 @@ class ServiceController extends Controller
                 'value' => '5',
             ]);
         }
-
 
         $radius = $radius->value;
 
