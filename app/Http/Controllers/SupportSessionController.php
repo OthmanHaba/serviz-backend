@@ -11,7 +11,9 @@ class SupportSessionController extends Controller
 {
     public function index()
     {
-        return Auth::user()->supportSessions();
+        return response()->json([
+            'sessions' => Auth::user()->supportSessions()
+        ]);
     }
 
     public function store(Request $request)
