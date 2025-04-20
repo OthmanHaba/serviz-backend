@@ -18,6 +18,10 @@ class SupportSessionController extends Controller
 
     public function store(Request $request)
     {
+        $request->validate([
+            'subject' => 'required|string'
+        ]);
+
         $session = SupportSession::create([
             'user_id' => Auth::id(),
             'admin_id' => 1,
