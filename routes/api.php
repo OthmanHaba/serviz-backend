@@ -109,4 +109,8 @@ Route::middleware('auth:sanctum')->group(function () {
         \App\Http\Controllers\SupportSessionController::class,'show'
     ]);
 
+    Route::post('/support/sessions/{session}/messages',[
+        \App\Http\Controllers\SupportSessionController::class,'sendMessage']
+    );
+
 });
