@@ -46,7 +46,7 @@ class ServiceController extends Controller
             ]);
         }
 
-        $radius = $radius->value;
+        $radius = $radius->value('value');
 
         if ($radius === null) {
             return response()->json([
