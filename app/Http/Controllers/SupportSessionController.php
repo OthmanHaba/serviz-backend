@@ -23,9 +23,7 @@ class SupportSessionController extends Controller
             'subject' => $request->subject
         ]);
 
-        return response()->json([
-            'session_id' => $session->id
-        ]);
+        return response()->noContent();
     }
 
     public function show(SupportSession $session)
