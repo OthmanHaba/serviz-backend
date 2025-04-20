@@ -12,6 +12,7 @@ return new class extends Migration
         Schema::create('support_sessions', function (Blueprint $table) {
             $table->id();
             $table->string('status');
+            $table->string('subject');
             $table->foreignIdFor(User::class);
             $table->foreignIdFor(User::class, 'admin_id');
             $table->timestamps();

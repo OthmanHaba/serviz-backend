@@ -186,4 +186,9 @@ class ProviderController extends Controller
             'message' => 'Service added successfully',
         ]);
     }
+
+    public function startSupportChat()
+    {
+
+    }
 }

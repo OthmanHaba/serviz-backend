@@ -97,4 +97,6 @@ Route::middleware('auth:sanctum')->group(function () {
         return response()->noContent();
     });
 
+    Route::post('/start-support-chat', [\App\Http\Controllers\SupportSessionController::class, 'store']);
+
 });

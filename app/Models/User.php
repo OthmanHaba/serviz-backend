@@ -110,4 +110,9 @@ class User extends Authenticatable
             'body' => $body,
         ]);
     }
+
+    public function supportSessions(): HasMany
+    {
+        return $this->hasMany(SupportSession::class,'user_id');
+    }
 }
