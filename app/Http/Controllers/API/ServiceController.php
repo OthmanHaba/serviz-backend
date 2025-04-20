@@ -35,11 +35,9 @@ class ServiceController extends Controller
         }
 
         $latitude = $request->coordinate['latitude'];
-        $longitude = $request->coordinate['longitude'];
-        //        $radius = 5; // 5 km
-        //        $radius = Setting::whereKey('Service_radio')->first()->value ?? 5;
 
-        $radius = Setting::where('key', 'Service_radio')->firstOrCreate([
+        $radius = Setting::where('key', 'Service_radio')
+            ->firstOrCreate([
             'key' => 'Service_radio',
             'value' => 5,
         ]);
