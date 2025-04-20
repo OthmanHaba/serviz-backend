@@ -12,7 +12,7 @@ class SupportSessionController extends Controller
     public function index()
     {
         return response()->json([
-            'sessions' => Auth::user()->supportSessions()
+            'sessions' => Auth::user()->supportSessions()->get()
         ]);
     }
 
