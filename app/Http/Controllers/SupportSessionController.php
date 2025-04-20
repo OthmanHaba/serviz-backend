@@ -39,4 +39,17 @@ class SupportSessionController extends Controller
             'messages' =>  $session->supportMessages()->with('sender')->get()
         ]);
     }
+
+
+    public function sendMessage(SupportSession $session ,Request $request)
+    {
+        $request->validate([
+            'message' => 'required|string'
+        ]);
+
+        $session->supportMessages()->create([
+            'sender_id' => Auth::id(),
+            'message' => $request->message
+        ]);
+    }
 }
