@@ -97,20 +97,20 @@ Route::middleware('auth:sanctum')->group(function () {
         return response()->noContent();
     });
 
-    Route::post('/support/sessions',[
-        \App\Http\Controllers\SupportSessionController::class,'store'
+    Route::post('/support/sessions', [
+        \App\Http\Controllers\SupportSessionController::class, 'store',
     ]);
 
-    Route::get('/support/sessions',[
-        \App\Http\Controllers\SupportSessionController::class,'index'
+    Route::get('/support/sessions', [
+        \App\Http\Controllers\SupportSessionController::class, 'index',
     ]);
 
-    Route::get('/support/sessions/{session}',[
-        \App\Http\Controllers\SupportSessionController::class,'show'
+    Route::get('/support/sessions/{session}', [
+        \App\Http\Controllers\SupportSessionController::class, 'show',
     ]);
 
-    Route::post('/support/sessions/{session}/messages',[
-        \App\Http\Controllers\SupportSessionController::class,'sendMessage']
+    Route::post('/support/sessions/{session}/messages', [
+        \App\Http\Controllers\SupportSessionController::class, 'sendMessage']
     );
 
 });

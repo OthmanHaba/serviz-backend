@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\UserResource\Pages;
 use App\Models\User;
 use Filament\Forms\Components\Card;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
@@ -51,6 +52,12 @@ class UserResource extends Resource
         return $form
             ->schema([
                 Card::make()->schema([
+
+                    TextInput::make('name')
+                        ->email()
+                        ->required()
+                        ->unique(ignoreRecord: true),
+
                     TextInput::make('email')
                         ->email()
                         ->required()
@@ -63,8 +70,14 @@ class UserResource extends Resource
                         ->dehydrateStateUsing(fn ($state) => Hash::make($state))
                         ->dehydrated(fn ($state) => filled($state))
                         ->required(fn (string $context): bool => $context === 'create'),
-                    Toggle::make('is_active')
-                        ->default(true),
+
+                    Select::make('role')
+                        ->options([
+                            'user' => 'User',
+                            'provider' => 'Provider',
+                            'admin' => 'Admin',
+                        ]),
+
                 ])->columns(2),
             ]);
     }
@@ -81,7 +94,7 @@ class UserResource extends Resource
                 TextColumn::make('wallet.balance')
                     ->label('Balance')
                     ->default(0)
-                    ->money()
+                    ->money('LYD')
                     ->searchable(),
                 IconColumn::make('is_active')
                     ->boolean()
@@ -116,6 +129,7 @@ class UserResource extends Resource
                         ->icon('heroicon-o-x-mark')
                         ->color('danger')
                         ->requiresConfirmation()
+                        ->label('حظر')
                         ->action(fn (User $record) => $record->update(['is_banned' => true, 'is_active' => false])),
 
                     Action::make('unban')
@@ -123,11 +137,13 @@ class UserResource extends Resource
                         ->hidden(fn (User $record) => ! $record->is_banned)
                         ->icon('heroicon-o-check')
                         ->color('success')
+                        ->label('فك الحظر')
                         ->requiresConfirmation()
                         ->action(fn (User $record) => $record->update(['is_active' => true, 'is_banned' => false])),
 
                     Action::make('resetPassword')
                         ->icon('heroicon-o-key')
+                        ->label(' اعادة تعيين كلمة المرور')
                         ->form([
                             TextInput::make('new_password')
                                 ->password()
@@ -141,13 +157,14 @@ class UserResource extends Resource
                         }),
 
                     Action::make('deposit')
-                        ->label('Deposit')
+                        ->label('إيداع')
                         ->icon('heroicon-o-currency-dollar')
                         ->color(Color::Green)
                         ->form([
                             TextInput::make('amount')
                                 ->required()
                                 ->numeric()
+                                ->label('القيمة ')
                                 ->minValue(1),
                         ])
                         ->action(function (User $record, array $data): void {
@@ -195,7 +212,7 @@ class UserResource extends Resource
                             ->schema([
                                 TextEntry::make('wallet.balance')
                                     ->label('Balance')
-                                    ->money()
+                                    ->suffix('LYD')
                                     ->icon('heroicon-o-currency-dollar')
                                     ->badge(),
 

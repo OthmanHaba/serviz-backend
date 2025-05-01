@@ -63,6 +63,10 @@ class AuthController extends Controller
 
             $result = $this->authService->login($request->only('email', 'password'));
 
+            if ($result['type'] == 'error') {
+                return response()->json($result, 204);
+            }
+
             return response()->json($result);
         } catch (\Exception $e) {
             return response()->json(['message' => 'Invalid credentials'], 401);

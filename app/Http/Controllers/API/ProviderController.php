@@ -112,19 +112,29 @@ class ProviderController extends Controller
             ]);
 
             $user = $activeRequest->user;
+            if ($activeRequest->type == 'Wallet') {
+                $user->wallet->transfer(
+                    (float) $activeRequest->price * 0.7,
+                    $activeRequest->provider->wallet
+                );
 
-            $user->wallet->transfer(
-                (float) $activeRequest->price * 0.7,
-                $activeRequest->provider->wallet
-            );
+                $user->wallet->transfer(
+                    (float) $activeRequest->price * 0.3,
+                    User::find(1)->wallet
+                );
 
-            $user->wallet->transfer(
-                (float) $activeRequest->price * 0.3,
-                User::find(1)->wallet
-            );
+            } else {
+                $activeRequest->provider->wallet->deposit(
+                    $activeRequest->price * 0.7
+                );
+
+                User::find(1)->wallet->deposit(
+                    $activeRequest->price * 0.3
+                );
+            }
         });
 
-        return response()->json(['message' => 'Request completed successfully']);
+        return response()->json(['message' => 'تم إكمال الطلب بنجاح']);
     }
 
     public function todayStatics()
@@ -185,10 +195,5 @@ class ProviderController extends Controller
         return response()->json([
             'message' => 'Service added successfully',
         ]);
-    }
-
-    public function startSupportChat()
-    {
-
     }
 }

@@ -52,9 +52,17 @@ class AuthService
 
         $token = $user->createToken('auth-token')->plainTextToken;
 
+        if ($user->email_verified_at === null) {
+            return [
+                'type' => 'error',
+                'message' => 'لم يتم تآكيد حسابك بعد',
+            ];
+        }
+
         return [
             'user' => $user,
             'token' => $token,
+            'type' => 'success',
         ];
     }
 

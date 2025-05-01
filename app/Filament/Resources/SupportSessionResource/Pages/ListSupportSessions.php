@@ -3,7 +3,6 @@
 namespace App\Filament\Resources\SupportSessionResource\Pages;
 
 use App\Filament\Resources\SupportSessionResource;
-use Filament\Actions\CreateAction;
 use Filament\Resources\Pages\ListRecords;
 
 class ListSupportSessions extends ListRecords

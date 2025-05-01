@@ -18,7 +18,6 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\View;
 
 class SupportSessionResource extends Resource
 {
@@ -82,9 +81,9 @@ class SupportSessionResource extends Resource
                 DeleteAction::make(),
                 Action::make('message')
                     ->label('open session')
-                ->url(fn(SupportSession $record): string => route('filament.admin.resources.support-sessions.messages', [
-                    'record' => $record->id
-                ]))
+                    ->url(fn (SupportSession $record): string => route('filament.admin.resources.support-sessions.messages', [
+                        'record' => $record->id,
+                    ])),
             ])
             ->bulkActions([
                 BulkActionGroup::make([

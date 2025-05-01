@@ -113,6 +113,6 @@ class User extends Authenticatable
 
     public function supportSessions(): HasMany
     {
-        return $this->hasMany(SupportSession::class,'user_id');
+        return $this->hasMany(SupportSession::class, 'user_id');
     }
 }
